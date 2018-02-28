@@ -6,7 +6,8 @@ import (
 )
 
 func main() {
-	beego.Router("/offer/", &offer.OfferView{}, "post:Post")
-	beego.Router("/offer/all/", &offer.OfferView{}, "get:All")
+	beego.Router("/offer", &offer.OfferView{}, "post:Post")
+	beego.Router("/offer/list", &offer.OfferView{}, "get:List")
+	beego.Router("/offer/:offerID:string", &offer.OfferView{}, "put:Put")
 	beego.Run("localhost:8000")
 }

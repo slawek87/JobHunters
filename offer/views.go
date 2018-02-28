@@ -5,19 +5,21 @@ import (
 	"github.com/rs/xid"
 	"time"
 	"gopkg.in/mgo.v2/bson"
+	"encoding/json"
 )
 
 type OfferView struct {
 	beego.Controller
+	OfferController    OfferController
 	//Session session.Store
 }
 
-func (v *OfferView) Post() {
+func (view *OfferView) Post() {
 	//getSession := v.StartSession()
 	getUniqueID := xid.New()
 	offer := Offer{}
 
-	v.ParseForm(&offer)
+	view.ParseForm(&offer)
 
 	offer.OfferID = getUniqueID.String()
 	offer.CreatedAt = time.Now()
@@ -25,33 +27,46 @@ func (v *OfferView) Post() {
 	offer.ExpirationTime = time.Now().AddDate(0, 0, EXPIRATION_TIME_DAYS)
 	offer.UserID = "Xyz123"//getSession.Get("ID").(string)
 
-	controller := OfferController{Offer: offer}
+	view.OfferController.SetOffer(offer)
 
-	controller.Create()
+	err := view.OfferController.Create()
 
-	v.Data["json"] = controller.Offer
-	v.ServeJSON()
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		view.Data["json"] = view.OfferController.GetOffer()
+		view.ServeJSON()
+	}
 }
 
-func (v *OfferView) Put() {
+func (view *OfferView) Put() {
 	var offer Offer
 
-	offerID := v.Ctx.Input.Param(":offerID")
-	v.ParseForm(&offer)
+	offerID := view.Ctx.Input.Param(":offerID")
+	view.ParseForm(&offer)
 
 	offer.OfferID = offerID
 
-	controller := OfferController{Offer: offer}
+	view.OfferController.SetOffer(offer)
 
-	controller.Update()
+	query, _ := json.Marshal(offer)
+	err := view.OfferController.Update(query)
 
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		view.Data["json"] = view.OfferController.GetOffer()
+		view.ServeJSON()
+	}
 }
 
-func (v *OfferView) All() {
-	controller := OfferController{}
+func (view *OfferView) List() {
+	offers, err := view.OfferController.All(bson.M{"user_id": "Xyz123"})
 
-	offers, _ := controller.All(bson.M{"user_id": "Xyz123"})
-
-	v.Data["json"] = offers
-	v.ServeJSON()
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		view.Data["json"] = offers
+		view.ServeJSON()
+	}
 }
