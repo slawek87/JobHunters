@@ -11,6 +11,7 @@ type OfferView struct {
 }
 
 func (view *OfferView) Post() {
+	results := make(map[string]interface{})
 	//getSession := v.StartSession()
 	view.ParseForm(&view.OfferController.Offer)
 	view.OfferController.SetUserID("Xyz123") //getSession.Get("ID").(string)
@@ -20,12 +21,14 @@ func (view *OfferView) Post() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
-		view.Data["json"] = view.OfferController.GetOffer()
+		results["results"] = view.OfferController.GetOffer()
+		view.Data["json"] = results
 		view.ServeJSON()
 	}
 }
 
 func (view *OfferView) Put() {
+	results := make(map[string]interface{})
 	offerID := view.Ctx.Input.Param(":offerID")
 
 	view.ParseForm(&view.OfferController.Offer)
@@ -37,18 +40,22 @@ func (view *OfferView) Put() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
-		view.Data["json"] = view.OfferController.GetOffer()
+		results["results"] = view.OfferController.GetOffer()
+		view.Data["json"] = results
 		view.ServeJSON()
 	}
 }
 
 func (view *OfferView) List() {
+	results := make(map[string]interface{})
 	offers, err := view.OfferController.All(nil)
 
 	if err != nil {
+		//result["Error"] = err.Error()
 		view.CustomAbort(300, err.Error())
 	} else {
-		view.Data["json"] = offers
+		results["results"] = offers
+		view.Data["json"] = results
 		view.ServeJSON()
 	}
 }
