@@ -8,6 +8,7 @@ import (
 	"github.com/astaxie/beego/validation"
 	"encoding/json"
 	"errors"
+	"github.com/slawek87/JobHunters/contribution"
 )
 
 const MongoDBIndex = "Offer"
@@ -60,6 +61,32 @@ func (controller *OfferController) Create() error {
 	return c.Insert(controller.Offer)
 }
 
+func (controller *OfferController) Get() (interface{}, error) {
+	var offer Offer
+	var result struct{
+		Offer
+		Contributions    []contribution.Contribution `json:"contributions"`
+	}
+
+	session, db := conf.MongoDB()
+	defer session.Close()
+
+	err := db.C(MongoDBIndex).Find(bson.M{"offer_id": controller.Offer.OfferID}).One(&offer)
+
+	if err != nil {
+		return nil, err
+	}
+
+	c := contribution.ContributionController{}
+	contributions, err := c.All(bson.M{"offer_id": controller.Offer.OfferID})
+
+	result.Offer = offer
+    result.Contributions = contributions
+
+
+    return result, err
+}
+
 func (controller *OfferController) Delete() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
@@ -70,7 +97,6 @@ func (controller *OfferController) Delete() error {
 		"user_id": controller.Offer.UserID})
 }
 
-// b argument is a bson object with data to update in User model.
 func (controller *OfferController) Update() error {
 	session, db := conf.MongoDB()
 	defer session.Close()

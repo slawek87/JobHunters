@@ -73,3 +73,13 @@ func (controller *ContributionController) Delete() error {
 		"offer_id": controller.Contribution.OfferID,
 		"user_id": controller.Contribution.UserID})
 }
+
+func (controller *ContributionController) All(query bson.M) ([]Contribution, error) {
+	var contributions []Contribution
+
+	session, db := conf.MongoDB()
+	defer session.Close()
+
+	err := db.C(MongoDBIndex).Find(query).All(&contributions)
+	return contributions, err
+}

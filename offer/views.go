@@ -27,6 +27,22 @@ func (view *OfferView) Post() {
 	}
 }
 
+func (view *OfferView) Get() {
+	results := make(map[string]interface{})
+
+	view.OfferController.SetOfferID(view.Ctx.Input.Param(":offerID"))
+
+	offer, err := view.OfferController.Get()
+
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		results["results"] = offer
+		view.Data["json"] = results
+		view.ServeJSON()
+	}
+}
+
 func (view *OfferView) Delete() {
 	results := make(map[string]interface{})
 
