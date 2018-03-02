@@ -60,13 +60,14 @@ func (controller *OfferController) Create() error {
 	return c.Insert(controller.Offer)
 }
 
-// b argument is a bson object with data to delete from db.
-func (controller *OfferController) Delete(b *bson.M) error {
+func (controller *OfferController) Delete() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
 
 	c := db.C(MongoDBIndex)
-	return c.Remove(b)
+	return c.Remove(bson.M{
+		"offer_id": controller.Offer.OfferID,
+		"user_id": controller.Offer.UserID})
 }
 
 // b argument is a bson object with data to update in User model.

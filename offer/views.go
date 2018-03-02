@@ -27,6 +27,24 @@ func (view *OfferView) Post() {
 	}
 }
 
+func (view *OfferView) Delete() {
+	results := make(map[string]interface{})
+
+	view.OfferController.SetOfferID(view.Ctx.Input.Param(":offerID"))
+	view.OfferController.SetUserID("Xyz123") //getSession.Get("ID").(string)
+
+	err := view.OfferController.Delete()
+
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		results["results"] = "Offer has been deleted."
+		view.Data["json"] = results
+		view.ServeJSON()
+	}
+}
+
+
 func (view *OfferView) Put() {
 	results := make(map[string]interface{})
 	offerID := view.Ctx.Input.Param(":offerID")

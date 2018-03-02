@@ -38,7 +38,7 @@ func (view *ContributionView) Delete() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
-		results["results"] = "Contribution deleted."
+		results["results"] = "Contribution has been deleted."
 		view.Data["json"] = results
 		view.ServeJSON()
 	}
