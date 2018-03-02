@@ -51,7 +51,6 @@ func (view *OfferView) List() {
 	offers, err := view.OfferController.All(nil)
 
 	if err != nil {
-		//result["Error"] = err.Error()
 		view.CustomAbort(300, err.Error())
 	} else {
 		results["results"] = offers

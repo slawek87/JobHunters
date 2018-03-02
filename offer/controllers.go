@@ -5,6 +5,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"time"
 	"github.com/rs/xid"
+	"github.com/astaxie/beego/validation"
+	"encoding/json"
+	"errors"
 )
 
 const MongoDBIndex = "Offer"
@@ -40,6 +43,19 @@ func (controller *OfferController) Create() error {
 	controller.Offer.UpdatedAt = time.Now()
 	controller.Offer.ExpirationTime = time.Now().AddDate(0, 0, EXPIRATION_TIME_DAYS)
 
+	valid := validation.Validation{}
+
+	isValid, _ := valid.Valid(controller.Offer)
+
+	if !isValid {
+		errorMsg := make(map[string]string)
+		for _, err := range valid.Errors {
+			errorMsg[err.Field] = err.Message
+		}
+		results, _ := json.Marshal(errorMsg)
+		return errors.New(string(results))
+	}
+
 	c := db.C(MongoDBIndex)
 	return c.Insert(controller.Offer)
 }
@@ -57,6 +73,19 @@ func (controller *OfferController) Delete(b *bson.M) error {
 func (controller *OfferController) Update() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
+
+	valid := validation.Validation{}
+
+	isValid, _ := valid.Valid(controller.Offer)
+
+	if !isValid {
+		errorMsg := make(map[string]string)
+		for _, err := range valid.Errors {
+			errorMsg[err.Field] = err.Message
+		}
+		results, _ := json.Marshal(errorMsg)
+		return errors.New(string(results))
+	}
 
 	c := db.C(MongoDBIndex)
 	err := c.Update(bson.M{"offer_id": &controller.Offer.OfferID}, &controller.Offer)
