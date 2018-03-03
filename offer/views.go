@@ -5,12 +5,11 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"strings"
 	"time"
-	"fmt"
 )
 
 type OfferView struct {
 	beego.Controller
-	OfferController    OfferController
+	OfferController OfferController
 	//Session session.Store
 }
 
@@ -63,7 +62,6 @@ func (view *OfferView) Delete() {
 		view.ServeJSON()
 	}
 }
-
 
 func (view *OfferView) Put() {
 	results := make(map[string]interface{})
@@ -131,9 +129,9 @@ func (view *OfferView) List() {
 	offers, err := view.OfferController.Find(
 		bson.M{
 			"description": bson.RegEx{Pattern: description, Options: "i"},
-			"currency": currency,
-			"commission": commissionQuery,
-			"created_at": bson.M{"$gte": createdAt}})
+			"currency":    currency,
+			"commission":  commissionQuery,
+			"created_at":  bson.M{"$gte": createdAt}})
 
 	if err != nil {
 		view.CustomAbort(300, err.Error())

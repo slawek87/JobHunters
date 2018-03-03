@@ -15,7 +15,7 @@ import (
 const MongoDBIndex = "Offer"
 
 type OfferController struct {
-	Offer	Offer
+	Offer Offer
 }
 
 func MigrateDB() {
@@ -80,9 +80,9 @@ func (controller *OfferController) Create() error {
 
 func (controller *OfferController) Get() (interface{}, error) {
 	var offer Offer
-	var result struct{
+	var result struct {
 		Offer
-		Contributions    []contribution.Contribution `json:"contributions"`
+		Contributions []contribution.Contribution `json:"contributions"`
 	}
 
 	session, db := conf.MongoDB()
@@ -98,10 +98,9 @@ func (controller *OfferController) Get() (interface{}, error) {
 	contributions, err := c.All(bson.M{"offer_id": controller.Offer.OfferID})
 
 	result.Offer = offer
-    result.Contributions = contributions
+	result.Contributions = contributions
 
-
-    return result, err
+	return result, err
 }
 
 func (controller *OfferController) Delete() error {
@@ -111,7 +110,7 @@ func (controller *OfferController) Delete() error {
 	c := db.C(MongoDBIndex)
 	return c.Remove(bson.M{
 		"offer_id": controller.Offer.OfferID,
-		"user_id": controller.Offer.UserID})
+		"user_id":  controller.Offer.UserID})
 }
 
 func (controller *OfferController) Update() error {

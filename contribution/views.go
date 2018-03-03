@@ -4,7 +4,7 @@ import "github.com/astaxie/beego"
 
 type ContributionView struct {
 	beego.Controller
-	ContributionController    ContributionController
+	ContributionController ContributionController
 	//Session session.Store
 }
 

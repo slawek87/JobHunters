@@ -1,6 +1,5 @@
 package candidate
 
-
 const MongoDBIndex = "Candidate"
 
 type CandidateController struct {

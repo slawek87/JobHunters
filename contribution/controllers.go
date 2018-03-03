@@ -13,7 +13,7 @@ import (
 const MongoDBIndex = "Contribution"
 
 type ContributionController struct {
-	Contribution	Contribution
+	Contribution Contribution
 }
 
 func (controller *ContributionController) SetContribution(contribution Contribution) {
@@ -70,8 +70,8 @@ func (controller *ContributionController) Delete() error {
 	c := db.C(MongoDBIndex)
 	return c.Remove(bson.M{
 		"contribution_id": controller.Contribution.ContributionID,
-		"offer_id": controller.Contribution.OfferID,
-		"user_id": controller.Contribution.UserID})
+		"offer_id":        controller.Contribution.OfferID,
+		"user_id":         controller.Contribution.UserID})
 }
 
 func (controller *ContributionController) All(query bson.M) ([]Contribution, error) {
