@@ -14,6 +14,6 @@ type Contribution struct {
 	LinkedIn       string    `json:"linked_in,omitempty" form:"linked_in" bson:"linked_in" valid:"Required"`
 	Description    string    `json:"description" form:"description" bson:"description"  valid:"Required"`
 	ExpirationTime time.Time `json:"expiration_time, @timestamp" bson:"expiration_time" form:"-"`
-	CreatedAt      time.Time `json:"offer_created_at" bson:"offer_created_at" form:"-"`
-	UpdatedAt      time.Time `json:"offer_updated_at" bson:"offer_updated_at" form:"-"`
+	CreatedAt      time.Time `json:"created_at" bson:"created_at" form:"-"`
+	UpdatedAt      time.Time `json:"updated_at" bson:"updated_at" form:"-"`
 }

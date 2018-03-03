@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	offer.MigrateDB()
+
 	beego.Router("/offer", &offer.OfferView{}, "post:Post")
 	beego.Router("/offer/list", &offer.OfferView{}, "get:List")
 	beego.Router("/offer/:offerID:string", &offer.OfferView{}, "get:Get")

@@ -9,12 +9,29 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/slawek87/JobHunters/contribution"
+	"gopkg.in/mgo.v2"
 )
 
 const MongoDBIndex = "Offer"
 
 type OfferController struct {
 	Offer	Offer
+}
+
+func MigrateDB() {
+	session, db := conf.MongoDB()
+	defer session.Close()
+
+	offerDB := db.C(MongoDBIndex)
+	offerIndex := mgo.Index{
+		Key: []string{"$text:description"},
+	}
+
+	err := offerDB.EnsureIndex(offerIndex)
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (controller *OfferController) SetOffer(offer Offer) {
@@ -121,7 +138,7 @@ func (controller *OfferController) Update() error {
 }
 
 // list all records
-func (controller *OfferController) All(query bson.M) ([]Offer, error) {
+func (controller *OfferController) Find(query bson.M) ([]Offer, error) {
 	var offers []Offer
 
 	session, db := conf.MongoDB()

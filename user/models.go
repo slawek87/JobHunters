@@ -12,8 +12,8 @@ type User struct {
 	Headline      string    `json:"headline,omitempty" bson:"headline"`
 	Email         string    `json:"email,omitempty" bson:"email"`
 	LinkedIn      string    `json:"linked_in,omitempty" bson:"linked_in"`
-	CreatedAt 	  time.Time `json:"user_created_at, @timestamp" bson:"user_created_at"`
-	UpdatedAt 	  time.Time `json:"user_updated_at, @timestamp" bson:"user_updated_at"`
+	CreatedAt 	  time.Time `json:"created_at, @timestamp" bson:"created_at"`
+	UpdatedAt 	  time.Time `json:"updated_at, @timestamp" bson:"updated_at"`
 }
 
 func (u *User) GetID() string {
