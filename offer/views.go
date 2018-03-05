@@ -65,10 +65,9 @@ func (view *OfferView) Delete() {
 
 func (view *OfferView) Put() {
 	results := make(map[string]interface{})
-	offerID := view.Ctx.Input.Param(":offerID")
 
 	view.ParseForm(&view.OfferController.Offer)
-	view.OfferController.SetOfferID(offerID)
+	view.OfferController.SetOfferID(view.Ctx.Input.Param(":offerID"))
 	view.OfferController.SetUserID("Xyz123") //getSession.Get("ID").(string)
 
 	err := view.OfferController.Update()
