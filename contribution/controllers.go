@@ -1,7 +1,6 @@
 package contribution
 
 import (
-	"github.com/rs/xid"
 	"time"
 	"github.com/astaxie/beego/validation"
 	"github.com/slawek87/JobHunters/conf"
@@ -10,7 +9,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-const MongoDBIndex = "Contribution"
+const MongoDBIndex = "Offer"
 
 type ContributionController struct {
 	Contribution Contribution
@@ -21,11 +20,11 @@ func (controller *ContributionController) SetContribution(contribution Contribut
 }
 
 func (controller *ContributionController) SetContributionID(ContributionID string) {
-	controller.Contribution.ContributionID = ContributionID
+	controller.Contribution.ContributionID = bson.ObjectIdHex(ContributionID)
 }
 
 func (controller *ContributionController) SetOfferID(OfferID string) {
-	controller.Contribution.OfferID = OfferID
+	controller.Contribution.OfferID = bson.ObjectIdHex(OfferID)
 }
 
 func (controller *ContributionController) SetUserID(UserID string) {
@@ -37,12 +36,10 @@ func (controller *ContributionController) GetContribution() Contribution {
 }
 
 func (controller *ContributionController) Create() error {
-	getUniqueID := xid.New()
-
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	controller.Contribution.ContributionID = getUniqueID.String()
+	controller.Contribution.ContributionID = bson.NewObjectId()
 	controller.Contribution.CreatedAt = time.Now()
 	controller.Contribution.UpdatedAt = time.Now()
 
@@ -59,19 +56,23 @@ func (controller *ContributionController) Create() error {
 		return errors.New(string(results))
 	}
 
-	c := db.C(MongoDBIndex)
-	return c.Insert(controller.Contribution)
+	collection := db.C(MongoDBIndex)
+
+	return collection.Update(
+		bson.M{"offer_id": controller.Contribution.OfferID},
+		bson.M{"$push": bson.M{"contributions": controller.Contribution}})
 }
 
 func (controller *ContributionController) Delete() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	c := db.C(MongoDBIndex)
-	return c.Remove(bson.M{
-		"contribution_id": controller.Contribution.ContributionID,
+	collection := db.C(MongoDBIndex)
+
+	return collection.Update(bson.M{
 		"offer_id":        controller.Contribution.OfferID,
-		"user_id":         controller.Contribution.UserID})
+		"user_id":         controller.Contribution.UserID},
+		bson.M{"$pull": bson.M{"contributions": bson.M{"contribution_id": controller.Contribution.ContributionID}}})
 }
 
 func (controller *ContributionController) All(query bson.M) ([]Contribution, error) {

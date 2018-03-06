@@ -4,7 +4,6 @@ import (
 	"github.com/slawek87/JobHunters/conf"
 	"gopkg.in/mgo.v2/bson"
 	"time"
-	"github.com/rs/xid"
 	"github.com/astaxie/beego/validation"
 	"encoding/json"
 	"errors"
@@ -39,7 +38,7 @@ func (controller *OfferController) SetOffer(offer Offer) {
 }
 
 func (controller *OfferController) SetOfferID(OfferID string) {
-	controller.Offer.OfferID = OfferID
+	controller.Offer.OfferID = bson.ObjectId(OfferID)
 }
 
 func (controller *OfferController) SetUserID(UserID string) {
@@ -51,12 +50,10 @@ func (controller *OfferController) GetOffer() Offer {
 }
 
 func (controller *OfferController) Create() error {
-	getUniqueID := xid.New()
-
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	controller.Offer.OfferID = getUniqueID.String()
+	controller.Offer.OfferID = bson.NewObjectId()
 	controller.Offer.CreatedAt = time.Now()
 	controller.Offer.UpdatedAt = time.Now()
 	controller.Offer.ExpirationTime = time.Now().AddDate(0, 0, EXPIRATION_TIME_DAYS)
