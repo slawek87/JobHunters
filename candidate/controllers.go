@@ -1,7 +1,6 @@
 package candidate
 
 import (
-	"github.com/rs/xid"
 	"time"
 	"github.com/astaxie/beego/validation"
 	"github.com/slawek87/JobHunters/conf"
@@ -24,19 +23,19 @@ func (controller *CandidateController) SetCandidate(candidate Candidate) {
 }
 
 func (controller *CandidateController) SetCandidateID(candidateID string) {
-	controller.Candidate.CandidateID = candidateID
+	controller.Candidate.CandidateID = bson.ObjectIdHex(candidateID)
 }
 
 func (controller *CandidateController) SetOfferID(OfferID string) {
-	controller.Candidate.OfferID = OfferID
+	controller.Candidate.OfferID = bson.ObjectIdHex(OfferID)
 }
 
 func (controller *CandidateController) SetRecruiterID(RecruiterID string) {
-	controller.Candidate.RecruiterID = RecruiterID
+	controller.Candidate.RecruiterID = bson.ObjectIdHex(RecruiterID)
 }
 
 func (controller *CandidateController) SetResumeID(ResumeID string) {
-	controller.Candidate.ResumeID = ResumeID
+	controller.Candidate.ResumeID = bson.ObjectIdHex(ResumeID)
 }
 
 func (controller *CandidateController) GetCandidate() Candidate {
@@ -48,18 +47,16 @@ func (controller *CandidateController) GetCandidateFullName() string {
 }
 
 func (controller *CandidateController) Create() error {
-	getUniqueID := xid.New()
-
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	controller.Candidate.CandidateID = getUniqueID.String()
+	controller.Candidate.CandidateID = bson.NewObjectId()
 	controller.Candidate.CreatedAt = time.Now()
 	controller.Candidate.UpdatedAt = time.Now()
 
 	if controller.Candidate.Resume != nil {
 		resumeName := strings.Replace(controller.GetCandidateFullName(), " ", "_", -1) + ".pdf"
-		controller.SetResumeID(controller.Candidate.CandidateID)
+		controller.Candidate.ResumeID = controller.Candidate.CandidateID
 
 		file, _ := db.GridFS(MongoDBFS).Create(resumeName)
 
@@ -110,7 +107,7 @@ func (controller *CandidateController) Update() error {
 		controller.DeleteResume()
 
 		resumeName := strings.Replace(controller.GetCandidateFullName(), " ", "_", -1) + ".pdf"
-		controller.SetResumeID(controller.Candidate.CandidateID)
+		controller.Candidate.ResumeID = controller.Candidate.CandidateID
 
 		file, _ := db.GridFS(MongoDBFS).Create(resumeName)
 
