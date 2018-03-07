@@ -6,13 +6,12 @@ import (
 	"github.com/slawek87/JobHunters/conf"
 	"encoding/json"
 	"errors"
-	"io"
-	"strings"
+	"os"
 	"gopkg.in/mgo.v2/bson"
 )
 
 const MongoDBIndex = "Candidate"
-const MongoDBFS = "Resume"
+const StoragePath = "static/resumes/"
 
 type CandidateController struct {
 	Candidate Candidate
@@ -31,11 +30,7 @@ func (controller *CandidateController) SetOfferID(OfferID string) {
 }
 
 func (controller *CandidateController) SetRecruiterID(RecruiterID string) {
-	controller.Candidate.RecruiterID = bson.ObjectIdHex(RecruiterID)
-}
-
-func (controller *CandidateController) SetResumeID(ResumeID string) {
-	controller.Candidate.ResumeID = bson.ObjectIdHex(ResumeID)
+	controller.Candidate.RecruiterID = RecruiterID
 }
 
 func (controller *CandidateController) GetCandidate() Candidate {
@@ -46,6 +41,11 @@ func (controller *CandidateController) GetCandidateFullName() string {
 	return controller.Candidate.FirstName + " " + controller.Candidate.LastName
 }
 
+func (controller *CandidateController) GetResumePath() string {
+	return StoragePath + controller.Candidate.ResumeID
+}
+
+
 func (controller *CandidateController) Create() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
@@ -55,15 +55,9 @@ func (controller *CandidateController) Create() error {
 	controller.Candidate.UpdatedAt = time.Now()
 
 	if controller.Candidate.Resume != nil {
-		resumeName := strings.Replace(controller.GetCandidateFullName(), " ", "_", -1) + ".pdf"
-		controller.Candidate.ResumeID = controller.Candidate.CandidateID
-
-		file, _ := db.GridFS(MongoDBFS).Create(resumeName)
-
-		io.Copy(file, controller.Candidate.Resume)
-
-		file.SetId(controller.Candidate.ResumeID)
-		file.Close()
+		controller.Candidate.ResumeID =
+			string(controller.Candidate.CandidateID.Hex()) + "_" +
+				controller.Candidate.FirstName + "_" + controller.Candidate.LastName + ".pdf"
 	}
 
 	valid := validation.Validation{}
@@ -79,11 +73,13 @@ func (controller *CandidateController) Create() error {
 		return errors.New(string(results))
 	}
 
-	c := db.C(MongoDBIndex)
-	return c.Insert(controller.Candidate)
+	collection := db.C(MongoDBIndex)
+	return collection.Insert(controller.Candidate)
 }
 
 func (controller *CandidateController) Update() error {
+	controller.Candidate.UpdatedAt = time.Now()
+
 	session, db := conf.MongoDB()
 	defer session.Close()
 
@@ -100,32 +96,31 @@ func (controller *CandidateController) Update() error {
 		return errors.New(string(results))
 	}
 
-	c := db.C(MongoDBIndex)
-	err := c.Update(bson.M{"candidate_id": &controller.Candidate.CandidateID}, &controller.Candidate)
-
 	if controller.Candidate.Resume != nil {
-		controller.DeleteResume()
-
-		resumeName := strings.Replace(controller.GetCandidateFullName(), " ", "_", -1) + ".pdf"
-		controller.Candidate.ResumeID = controller.Candidate.CandidateID
-
-		file, _ := db.GridFS(MongoDBFS).Create(resumeName)
-
-		io.Copy(file, controller.Candidate.Resume)
-
-		file.SetId(controller.Candidate.ResumeID)
-		file.Close()
+		controller.Candidate.ResumeID =
+			string(controller.Candidate.CandidateID.Hex()) + "_" +
+				controller.Candidate.FirstName + "_" + controller.Candidate.LastName + ".pdf"
 	}
 
-	return err
+	collection := db.C(MongoDBIndex)
+	return collection.Update(bson.M{"candidate_id": &controller.Candidate.CandidateID}, &controller.Candidate)
 }
 
 func (controller *CandidateController) DeleteResume() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	file := db.GridFS(MongoDBFS)
-	return file.RemoveId(controller.Candidate.CandidateID)
+	collection := db.C(MongoDBIndex)
+	err := collection.Find(bson.M{
+		"candidate_id": controller.Candidate.CandidateID,
+		"offer_id": controller.Candidate.OfferID,
+		"recruiter_id":  controller.Candidate.RecruiterID}).One(&controller.Candidate)
+
+	if err != nil {
+		return err
+	}
+
+	return os.Remove(controller.GetResumePath())
 }
 
 func (controller *CandidateController) Delete() error {
@@ -134,9 +129,31 @@ func (controller *CandidateController) Delete() error {
 
 	controller.DeleteResume()
 
-	c := db.C(MongoDBIndex)
-	return c.Remove(bson.M{
+	collection := db.C(MongoDBIndex)
+	return collection.Remove(bson.M{
 		"candidate_id": controller.Candidate.CandidateID,
 		"offer_id": controller.Candidate.OfferID,
 		"recruiter_id":  controller.Candidate.RecruiterID})
+}
+
+func (controller *CandidateController) Find(query bson.M) ([]Candidate, error) {
+	var candidates []Candidate
+
+	session, db := conf.MongoDB()
+	defer session.Close()
+
+	collection := db.C(MongoDBIndex).Find(query).All(&candidates)
+	return candidates, collection
+}
+
+func (controller *CandidateController) Get() (Candidate, error) {
+	session, db := conf.MongoDB()
+	defer session.Close()
+
+	err := db.C(MongoDBIndex).Find(bson.M{"candidate_id": controller.Candidate.CandidateID}).One(&controller.Candidate)
+	return controller.Candidate, err
+}
+
+func (controller *CandidateController) DownloadResume() (string) {
+	return controller.GetResumePath()
 }

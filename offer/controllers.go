@@ -7,7 +7,6 @@ import (
 	"github.com/astaxie/beego/validation"
 	"encoding/json"
 	"errors"
-	"github.com/slawek87/JobHunters/contribution"
 	"gopkg.in/mgo.v2"
 )
 
@@ -38,7 +37,7 @@ func (controller *OfferController) SetOffer(offer Offer) {
 }
 
 func (controller *OfferController) SetOfferID(OfferID string) {
-	controller.Offer.OfferID = bson.ObjectId(OfferID)
+	controller.Offer.OfferID = bson.ObjectIdHex(OfferID)
 }
 
 func (controller *OfferController) SetUserID(UserID string) {
@@ -76,28 +75,12 @@ func (controller *OfferController) Create() error {
 }
 
 func (controller *OfferController) Get() (interface{}, error) {
-	var offer Offer
-	var result struct {
-		Offer
-		Contributions []contribution.Contribution `json:"contributions"`
-	}
-
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	err := db.C(MongoDBIndex).Find(bson.M{"offer_id": controller.Offer.OfferID}).One(&offer)
+	err := db.C(MongoDBIndex).Find(bson.M{"offer_id": controller.Offer.OfferID}).One(&controller.Offer)
 
-	if err != nil {
-		return nil, err
-	}
-
-	c := contribution.ContributionController{}
-	contributions, err := c.All(bson.M{"offer_id": controller.Offer.OfferID})
-
-	result.Offer = offer
-	result.Contributions = contributions
-
-	return result, err
+	return controller.Offer, err
 }
 
 func (controller *OfferController) Delete() error {
@@ -111,6 +94,8 @@ func (controller *OfferController) Delete() error {
 }
 
 func (controller *OfferController) Update() error {
+	controller.Offer.UpdatedAt = time.Now()
+
 	session, db := conf.MongoDB()
 	defer session.Close()
 
@@ -140,6 +125,6 @@ func (controller *OfferController) Find(query bson.M) ([]Offer, error) {
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	c := db.C(MongoDBIndex).Find(query).All(&offers)
-	return offers, c
+	collection := db.C(MongoDBIndex).Find(query).All(&offers)
+	return offers, collection
 }

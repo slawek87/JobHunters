@@ -1,6 +1,9 @@
 package candidate
 
-import "github.com/astaxie/beego"
+import (
+	"github.com/astaxie/beego"
+	"gopkg.in/mgo.v2/bson"
+)
 
 type CandidateView struct {
 	beego.Controller
@@ -21,6 +24,9 @@ func (view *CandidateView) Post() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
+		if view.CandidateController.Candidate.Resume != nil {
+			view.SaveToFile("resume", view.CandidateController.GetResumePath())
+		}
 		results["results"] = view.CandidateController.GetCandidate()
 		view.Data["json"] = results
 		view.ServeJSON()
@@ -41,12 +47,31 @@ func (view *CandidateView) Put() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
+		if view.CandidateController.Candidate.Resume != nil {
+			view.SaveToFile("resume", view.CandidateController.GetResumePath())
+		}
 		results["results"] = view.CandidateController.Candidate
 		view.Data["json"] = results
 		view.ServeJSON()
 	}
 }
 
+
+func (view *CandidateView) List() {
+	results := make(map[string]interface{})
+	view.CandidateController.SetOfferID(view.Ctx.Input.Param(":offerID"))
+
+	candidates, err := view.CandidateController.Find(
+		bson.M{"offer_id": view.CandidateController.Candidate.OfferID})
+
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		results["results"] = candidates
+		view.Data["json"] = results
+		view.ServeJSON()
+	}
+}
 
 func (view *CandidateView) Delete() {
 	results := make(map[string]interface{})
@@ -64,4 +89,9 @@ func (view *CandidateView) Delete() {
 		view.Data["json"] = results
 		view.ServeJSON()
 	}
+}
+
+func (view *CandidateView) DownloadResume() {
+	view.CandidateController.Candidate.ResumeID = view.Ctx.Input.Param(":resumeID") + ".pdf"
+	view.Ctx.Output.Download(view.CandidateController.DownloadResume(), view.CandidateController.Candidate.ResumeID)
 }

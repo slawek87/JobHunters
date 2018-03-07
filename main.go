@@ -18,6 +18,8 @@ func main() {
 	beego.Router("/offer/:offerID:string/contribution", &contribution.ContributionView{}, "post:Post")
 	beego.Router("/offer/:offerID:string/contribution/:contributionID:string", &contribution.ContributionView{}, "delete:Delete")
 	beego.Router("/offer/:offerID:string/candidate", &candidate.CandidateView{}, "post:Post")
+	beego.Router("/offer/:offerID:string/candidate/list", &candidate.CandidateView{}, "get:List")
+	beego.Router("/offer/:offerID:string/candidate/resume/:resumeID:string.pdf", &candidate.CandidateView{}, "get:DownloadResume")
 	beego.Router("/offer/:offerID:string/candidate/:candidateID:string", &candidate.CandidateView{}, "put:Put")
 	beego.Router("/offer/:offerID:string/candidate/:candidateID:string", &candidate.CandidateView{}, "delete:Delete")
 	beego.Run("localhost:8000")
