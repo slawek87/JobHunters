@@ -17,7 +17,7 @@ type Candidate struct {
 	Currency        string         `json:"currency" form:"currency" bson:"currency" valid:"Required"`
 	CooperationForm string         `json:"cooperation_form" form:"cooperation_form" bson:"cooperation_form" valid:"Required"`
 	Description     string         `json:"description" form:"description" bson:"description" valid:"Required"`
-	Resume          multipart.File `json:"resume" form:"resume" bson:"-"`
+	Resume          multipart.File `json:"-" form:"resume" bson:"-"`
 	ResumeID        string         `json:"resume_id" bson:"resume_id"`
 	Accepted        bool           `json:"accepted" form:"accepted" bson:"accepted" default:"false"`
 	Interview       bool           `json:"interview" form:"interview" bson:"interview" default:"false"`

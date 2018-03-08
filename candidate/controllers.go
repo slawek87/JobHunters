@@ -61,7 +61,6 @@ func (controller *CandidateController) Create() error {
 	}
 
 	valid := validation.Validation{}
-
 	isValid, _ := valid.Valid(controller.Candidate)
 
 	if !isValid {
@@ -84,7 +83,6 @@ func (controller *CandidateController) Update() error {
 	defer session.Close()
 
 	valid := validation.Validation{}
-
 	isValid, _ := valid.Valid(controller.Candidate)
 
 	if !isValid {
