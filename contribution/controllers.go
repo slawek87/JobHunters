@@ -19,16 +19,16 @@ func (controller *ContributionController) SetContribution(contribution Contribut
 	controller.Contribution = contribution
 }
 
-func (controller *ContributionController) SetContributionID(ContributionID string) {
-	controller.Contribution.ContributionID = bson.ObjectIdHex(ContributionID)
+func (controller *ContributionController) SetContributionID(contributionID string) {
+	controller.Contribution.ContributionID = bson.ObjectIdHex(contributionID)
 }
 
-func (controller *ContributionController) SetOfferID(OfferID string) {
-	controller.Contribution.OfferID = bson.ObjectIdHex(OfferID)
+func (controller *ContributionController) SetOfferID(offerID string) {
+	controller.Contribution.OfferID = bson.ObjectIdHex(offerID)
 }
 
-func (controller *ContributionController) SetUserID(UserID string) {
-	controller.Contribution.UserID = UserID
+func (controller *ContributionController) SetUserID(userID string) {
+	controller.Contribution.UserID = userID
 }
 
 func (controller *ContributionController) GetContribution() Contribution {
@@ -71,7 +71,7 @@ func (controller *ContributionController) Delete() error {
 		"user_id": controller.Contribution.UserID})
 }
 
-func (controller *ContributionController) All(query bson.M) ([]Contribution, error) {
+func (controller *ContributionController) Find(query bson.M) ([]Contribution, error) {
 	var contributions []Contribution
 
 	session, db := conf.MongoDB()

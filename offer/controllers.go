@@ -37,12 +37,12 @@ func (controller *OfferController) SetOffer(offer Offer) {
 	controller.Offer = offer
 }
 
-func (controller *OfferController) SetOfferID(OfferID string) {
-	controller.Offer.OfferID = bson.ObjectIdHex(OfferID)
+func (controller *OfferController) SetOfferID(offerID string) {
+	controller.Offer.OfferID = bson.ObjectIdHex(offerID)
 }
 
-func (controller *OfferController) SetUserID(UserID string) {
-	controller.Offer.UserID = UserID
+func (controller *OfferController) SetUserID(userID string) {
+	controller.Offer.UserID = userID
 }
 
 func (controller *OfferController) GetOffer() Offer {
@@ -92,7 +92,7 @@ func (controller *OfferController) Get() (interface{}, error) {
 	}
 
 	collection := contribution.ContributionController{}
-	contributions, err := collection.All(bson.M{"offer_id": controller.Offer.OfferID})
+	contributions, err := collection.Find(bson.M{"offer_id": controller.Offer.OfferID})
 
 	result.Offer = offer
 	result.Contributions = contributions

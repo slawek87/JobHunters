@@ -25,12 +25,12 @@ func (controller *CandidateController) SetCandidateID(candidateID string) {
 	controller.Candidate.CandidateID = bson.ObjectIdHex(candidateID)
 }
 
-func (controller *CandidateController) SetOfferID(OfferID string) {
-	controller.Candidate.OfferID = bson.ObjectIdHex(OfferID)
+func (controller *CandidateController) SetOfferID(offerID string) {
+	controller.Candidate.OfferID = bson.ObjectIdHex(offerID)
 }
 
-func (controller *CandidateController) SetRecruiterID(RecruiterID string) {
-	controller.Candidate.RecruiterID = RecruiterID
+func (controller *CandidateController) SetRecruiterID(recruiterID string) {
+	controller.Candidate.RecruiterID = recruiterID
 }
 
 func (controller *CandidateController) GetCandidate() Candidate {
