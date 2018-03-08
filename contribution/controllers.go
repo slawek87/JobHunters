@@ -9,7 +9,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-const MongoDBIndex = "Offer"
+const MongoDBIndex = "Contribution"
 
 type ContributionController struct {
 	Contribution Contribution
@@ -57,10 +57,7 @@ func (controller *ContributionController) Create() error {
 	}
 
 	collection := db.C(MongoDBIndex)
-
-	return collection.Update(
-		bson.M{"offer_id": controller.Contribution.OfferID},
-		bson.M{"$push": bson.M{"contributions": controller.Contribution}})
+	return collection.Insert(controller.Contribution)
 }
 
 func (controller *ContributionController) Delete() error {
@@ -68,11 +65,10 @@ func (controller *ContributionController) Delete() error {
 	defer session.Close()
 
 	collection := db.C(MongoDBIndex)
-
-	return collection.Update(bson.M{
-		"offer_id":        controller.Contribution.OfferID,
-		"user_id":         controller.Contribution.UserID},
-		bson.M{"$pull": bson.M{"contributions": bson.M{"contribution_id": controller.Contribution.ContributionID}}})
+	return collection.Remove(bson.M{
+		"contribution_id": controller.Contribution.ContributionID,
+		"offer_id": controller.Contribution.OfferID,
+		"user_id": controller.Contribution.UserID})
 }
 
 func (controller *ContributionController) All(query bson.M) ([]Contribution, error) {

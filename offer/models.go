@@ -2,7 +2,6 @@ package offer
 
 import (
 	"time"
-	"github.com/slawek87/JobHunters/contribution"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -19,7 +18,6 @@ type Offer struct {
 	Currency       string                      `json:"currency" form:"currency" bson:"currency" valid:"Required"`
 	Remote         bool                        `json:"remote" form:"remote" bson:"remote" valid:"Required"`
 	ExpirationTime time.Time                   `json:"expiration_time, @timestamp" bson:"expiration_time" form:"-"`
-	Contributions  []contribution.Contribution `json:"contributions"  bson:"contributions"`
 	CreatedAt      time.Time                   `json:"created_at" bson:"created_at" form:"-"`
 	UpdatedAt      time.Time                   `json:"updated_at" bson:"updated_at" form:"-"`
 }

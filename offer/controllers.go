@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"gopkg.in/mgo.v2"
+	"github.com/slawek87/JobHunters/contribution"
 )
 
 const MongoDBIndex = "Offer"
@@ -75,12 +76,28 @@ func (controller *OfferController) Create() error {
 }
 
 func (controller *OfferController) Get() (interface{}, error) {
+	var offer Offer
+	var result struct {
+		Offer
+		Contributions []contribution.Contribution `json:"contributions"`
+	}
+
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	err := db.C(MongoDBIndex).Find(bson.M{"offer_id": controller.Offer.OfferID}).One(&controller.Offer)
+	err := db.C(MongoDBIndex).Find(bson.M{"offer_id": controller.Offer.OfferID}).One(&offer)
 
-	return controller.Offer, err
+	if err != nil {
+		return nil, err
+	}
+
+	collection := contribution.ContributionController{}
+	contributions, err := collection.All(bson.M{"offer_id": controller.Offer.OfferID})
+
+	result.Offer = offer
+	result.Contributions = contributions
+
+	return result, err
 }
 
 func (controller *OfferController) Delete() error {
