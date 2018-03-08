@@ -56,6 +56,22 @@ func (view *CandidateView) Put() {
 	}
 }
 
+func (view *CandidateView) Get() {
+	results := make(map[string]interface{})
+
+	view.CandidateController.SetCandidateID(view.Ctx.Input.Param(":CandidateID"))
+	view.CandidateController.SetOfferID(view.Ctx.Input.Param(":offerID"))
+
+	candidate, err := view.CandidateController.Get()
+
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		results["results"] = candidate
+		view.Data["json"] = results
+		view.ServeJSON()
+	}
+}
 
 func (view *CandidateView) List() {
 	results := make(map[string]interface{})

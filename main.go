@@ -24,6 +24,7 @@ func main() {
 	beego.Router("/offer/:offerID:string/candidate/:candidateID:string/feedback", &feedback.FeedbackView{}, "post:SendFeedback")
 	beego.Router("/offer/:offerID:string/candidate/:candidateID:string/feedback/:feedbackID:string", &feedback.FeedbackView{}, "post:SendFeedback")
 	beego.Router("/offer/:offerID:string/candidate/:candidateID:string/feedback/:feedbackID:string", &feedback.FeedbackView{}, "get:ReceiveFeedback")
+	beego.Router("/offer/:offerID:string/candidate/:candidateID:string", &candidate.CandidateView{}, "get:Get")
 	beego.Router("/offer/:offerID:string/candidate/:candidateID:string", &candidate.CandidateView{}, "put:Put")
 	beego.Router("/offer/:offerID:string/candidate/:candidateID:string", &candidate.CandidateView{}, "delete:Delete")
 	beego.Run("localhost:8000")

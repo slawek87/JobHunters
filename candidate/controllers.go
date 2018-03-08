@@ -130,8 +130,7 @@ func (controller *CandidateController) Delete() error {
 	collection := db.C(MongoDBIndex)
 	return collection.Remove(bson.M{
 		"candidate_id": controller.Candidate.CandidateID,
-		"offer_id": controller.Candidate.OfferID,
-		"recruiter_id":  controller.Candidate.RecruiterID})
+		"offer_id": controller.Candidate.OfferID})
 }
 
 func (controller *CandidateController) Find(query bson.M) ([]Candidate, error) {
