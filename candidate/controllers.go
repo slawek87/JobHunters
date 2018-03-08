@@ -143,12 +143,11 @@ func (controller *CandidateController) Find(query bson.M) ([]Candidate, error) {
 	return candidates, collection
 }
 
-func (controller *CandidateController) Get() (Candidate, error) {
+func (controller *CandidateController) Get() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	err := db.C(MongoDBIndex).Find(bson.M{"candidate_id": controller.Candidate.CandidateID}).One(&controller.Candidate)
-	return controller.Candidate, err
+	return db.C(MongoDBIndex).Find(bson.M{"candidate_id": controller.Candidate.CandidateID}).One(&controller.Candidate)
 }
 
 func (controller *CandidateController) DownloadResume() (string) {

@@ -62,12 +62,12 @@ func (view *CandidateView) Get() {
 	view.CandidateController.SetCandidateID(view.Ctx.Input.Param(":CandidateID"))
 	view.CandidateController.SetOfferID(view.Ctx.Input.Param(":offerID"))
 
-	candidate, err := view.CandidateController.Get()
+	err := view.CandidateController.Get()
 
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
-		results["results"] = candidate
+		results["results"] = view.CandidateController.Candidate
 		view.Data["json"] = results
 		view.ServeJSON()
 	}
