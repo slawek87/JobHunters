@@ -9,6 +9,7 @@ type Feedback struct {
 	FeedbackID  bson.ObjectId `json:"feedback_id" bson:"feedback_id" valid:"Required"`
 	OfferID     bson.ObjectId `json:"offer_id" bson:"offer_id" form:"-" valid:"Required"`
 	CandidateID bson.ObjectId `json:"candidate_id" bson:"candidate_id" valid:"Required"`
+	Messages	[]Message	  `json:"messages" form:"-" bson:"messages" valid:"Required"`
 	CreatedAt   time.Time     `json:"created_at" bson:"created_at" form:"-"`
 	UpdatedAt   time.Time     `json:"updated_at" bson:"updated_at" form:"-"`
 }
