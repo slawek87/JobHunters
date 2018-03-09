@@ -27,7 +27,6 @@ func MigrateDB() {
 	}
 
 	err := offerDB.EnsureIndex(offerIndex)
-
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +58,6 @@ func (controller *OfferController) Create() error {
 	controller.Offer.ExpirationTime = time.Now().AddDate(0, 0, EXPIRATION_TIME_DAYS)
 
 	valid := validation.Validation{}
-
 	isValid, _ := valid.Valid(controller.Offer)
 
 	if !isValid {
@@ -86,7 +84,6 @@ func (controller *OfferController) Get() (interface{}, error) {
 	defer session.Close()
 
 	err := db.C(MongoDBIndex).Find(bson.M{"offer_id": controller.Offer.OfferID}).One(&offer)
-
 	if err != nil {
 		return nil, err
 	}
@@ -104,8 +101,8 @@ func (controller *OfferController) Delete() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	c := db.C(MongoDBIndex)
-	return c.Remove(bson.M{
+	collection := db.C(MongoDBIndex)
+	return collection.Remove(bson.M{
 		"offer_id": controller.Offer.OfferID,
 		"user_id":  controller.Offer.UserID})
 }
@@ -117,7 +114,6 @@ func (controller *OfferController) Update() error {
 	defer session.Close()
 
 	valid := validation.Validation{}
-
 	isValid, _ := valid.Valid(controller.Offer)
 
 	if !isValid {
@@ -129,10 +125,8 @@ func (controller *OfferController) Update() error {
 		return errors.New(string(results))
 	}
 
-	c := db.C(MongoDBIndex)
-	err := c.Update(bson.M{"offer_id": &controller.Offer.OfferID}, &controller.Offer)
-
-	return err
+	collection := db.C(MongoDBIndex)
+	return collection.Update(bson.M{"offer_id": &controller.Offer.OfferID}, &controller.Offer)
 }
 
 // list all records

@@ -12,7 +12,7 @@ func (view *FeedbackView) SendFeedback() {
 	results := make(map[string]interface{})
 
 	view.ParseForm(&view.MainController.FeedbackController.Feedback)
-	view.MainController.FeedbackController.SetFeedbackID(view.Ctx.Input.Param(":FeedbackID"))
+	view.MainController.FeedbackController.SetFeedbackID(view.Ctx.Input.Param(":feedbackID"))
 	view.MainController.FeedbackController.SetCandidateID(view.Ctx.Input.Param(":candidateID"))
 	view.MainController.FeedbackController.SetOfferID(view.Ctx.Input.Param(":offerID"))
 
@@ -42,7 +42,7 @@ func (view *FeedbackView) ReceiveFeedback() {
 	results := make(map[string]interface{})
 
 	view.ParseForm(&view.MainController.FeedbackController.Feedback)
-	view.MainController.FeedbackController.SetFeedbackID(view.Ctx.Input.Param(":FeedbackID"))
+	view.MainController.FeedbackController.SetFeedbackID(view.Ctx.Input.Param(":feedbackID"))
 	view.MainController.FeedbackController.SetCandidateID(view.Ctx.Input.Param(":candidateID"))
 	view.MainController.FeedbackController.SetOfferID(view.Ctx.Input.Param(":offerID"))
 
@@ -51,6 +51,7 @@ func (view *FeedbackView) ReceiveFeedback() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
+		view.MainController.SetRead("xyz2")
 		results["results"] = view.MainController.FeedbackController.Feedback
 		view.Data["json"] = results
 		view.ServeJSON()

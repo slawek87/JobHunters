@@ -44,7 +44,6 @@ func (controller *ContributionController) Create() error {
 	controller.Contribution.UpdatedAt = time.Now()
 
 	valid := validation.Validation{}
-
 	isValid, _ := valid.Valid(controller.Contribution)
 
 	if !isValid {

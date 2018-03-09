@@ -59,7 +59,7 @@ func (view *CandidateView) Put() {
 func (view *CandidateView) Get() {
 	results := make(map[string]interface{})
 
-	view.CandidateController.SetCandidateID(view.Ctx.Input.Param(":CandidateID"))
+	view.CandidateController.SetCandidateID(view.Ctx.Input.Param(":candidateID"))
 	view.CandidateController.SetOfferID(view.Ctx.Input.Param(":offerID"))
 
 	err := view.CandidateController.Get()

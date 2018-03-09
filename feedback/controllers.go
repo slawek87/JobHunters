@@ -29,7 +29,9 @@ func (controller *FeedbackController) SetFeedback(feedback Feedback) {
 }
 
 func (controller *FeedbackController) SetFeedbackID(feedbackID string) {
-	controller.Feedback.FeedbackID = bson.ObjectIdHex(feedbackID)
+	if feedbackID != "" {
+		controller.Feedback.FeedbackID = bson.ObjectIdHex(feedbackID)
+	}
 }
 
 func (controller *FeedbackController) SetCandidateID(candidateID string) {
@@ -38,10 +40,6 @@ func (controller *FeedbackController) SetCandidateID(candidateID string) {
 
 func (controller *FeedbackController) SetOfferID(offerID string) {
 	controller.Feedback.OfferID = bson.ObjectIdHex(offerID)
-}
-
-func (controller *FeedbackController) SetContributionID(contributionID string) {
-	controller.Feedback.ContributionID = bson.ObjectIdHex(contributionID)
 }
 
 func (controller *FeedbackController) GetFeedback() Feedback {
@@ -57,7 +55,7 @@ func (controller *MessageController) SetMessageID(messageID string) {
 }
 
 func (controller *MessageController) SetSenderID(senderID string) {
-	controller.Message.SenderID = bson.ObjectIdHex(senderID)
+	controller.Message.SenderID = senderID
 }
 
 func (controller *MessageController) SetSenderFullName(senderFullName string) {
@@ -68,12 +66,30 @@ func (controller *MessageController) SetContent(content string) {
 	controller.Message.Content = content
 }
 
-func (controller *MessageController) SetIsRead() {
-	controller.Message.IsRead = true
-}
-
 func (controller *MessageController) GetMessage() Message {
 	return controller.Message
+}
+
+func (controller *MainController) SetRead(readerID string) {
+	update := false
+
+	for i, message := range controller.FeedbackController.Feedback.Messages {
+		if message.IsRead == false && message.SenderID != readerID {
+			controller.FeedbackController.Feedback.Messages[i].IsRead = true
+			controller.FeedbackController.Feedback.Messages[i].UpdatedAt = time.Now()
+			update = true
+		}
+	}
+
+	if update == true {
+		session, db := conf.MongoDB()
+		defer session.Close()
+
+		collection := db.C(MongoDBIndex)
+		collection.Update(
+			bson.M{"feedback_id": &controller.FeedbackController.Feedback.FeedbackID},
+			&controller.FeedbackController.Feedback)
+	}
 }
 
 func (controller *MainController) CreateFeedback() error {
@@ -97,8 +113,8 @@ func (controller *MainController) CreateFeedback() error {
 		return errors.New(string(results))
 	}
 
-	c := db.C(MongoDBIndex)
-	return c.Insert(controller.FeedbackController.Feedback)
+	collection := db.C(MongoDBIndex)
+	return collection.Insert(controller.FeedbackController.Feedback)
 }
 
 func (controller *MainController) CreateMessage() error {
