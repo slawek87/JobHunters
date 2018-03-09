@@ -69,8 +69,8 @@ func (controller *OfferController) Create() error {
 		return errors.New(string(results))
 	}
 
-	c := db.C(MongoDBIndex)
-	return c.Insert(controller.Offer)
+	collection := db.C(MongoDBIndex)
+	return collection.Insert(controller.Offer)
 }
 
 func (controller *OfferController) Get() (interface{}, error) {

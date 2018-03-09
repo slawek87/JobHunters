@@ -1,37 +1,28 @@
 package user
 
-import "time"
+import (
+	"time"
+	"gopkg.in/mgo.v2/bson"
+)
 
 type User struct {
-	UserID        string    `json:"user_id" bson:"user_id"`
-	FirstName     string    `json:"first_name" bson:"first_name"`
-	LastName      string    `json:"last_name" bson:"last_name"`
-	Avatar        string    `json:"avatar,omitempty" bson:"avatar"`
-	Location      string    `json:"location,omitempty" bson:"location"`
-	Position      string    `json:"position,omitempty" bson:"position"`
-	Headline      string    `json:"headline,omitempty" bson:"headline"`
-	Email         string    `json:"email,omitempty" bson:"email"`
-	LinkedIn      string    `json:"linked_in,omitempty" bson:"linked_in"`
-	CreatedAt 	  time.Time `json:"created_at, @timestamp" bson:"created_at"`
-	UpdatedAt 	  time.Time `json:"updated_at, @timestamp" bson:"updated_at"`
+	UserID        bson.ObjectId `json:"user_id" bson:"user_id" valid:"Required"`
+	LinkedInID    string        `json:"-,omitempty" bson:"linked_in_id" valid:"Required"`
+	FirstName     string        `json:"first_name" bson:"first_name" valid:"Required"`
+	LastName      string        `json:"last_name" bson:"last_name" valid:"Required"`
+	Avatar        string        `json:"avatar,omitempty" bson:"avatar"`
+	Location      string        `json:"location,omitempty" bson:"location"`
+	Headline      string        `json:"headline,omitempty" bson:"headline"`
+	Email         string        `json:"email,omitempty" bson:"email"`
+	LinkedIn      string        `json:"linked_in,omitempty" bson:"linked_in"`
+	Authorization Authorization `json:"authorization" bson:"-"`
+	CreatedAt     time.Time     `json:"created_at, @timestamp" bson:"created_at"`
+	UpdatedAt     time.Time     `json:"updated_at, @timestamp" bson:"updated_at"`
 }
 
-func (u *User) GetID() string {
-    return u.UserID
-}
-
-func (u *User) GetFirstName() string {
-	return u.FirstName
-}
-
-func (u *User) GetLastName() string {
-	return u.LastName
-}
-
-func (u *User) GetAvatar() string {
-	return u.Avatar
-}
-
-func (u *User) GetEmail() string {
-	return u.Email
+type Authorization struct {
+	Code        string `json:"code" form:"code"`
+	State       string `json:"state" form:"state"`
+	AccessToken string `json:"access_token" form:"-"`
+	ExpiresIn   int    `json:"expires_in" form:"-"`
 }

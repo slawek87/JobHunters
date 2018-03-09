@@ -6,11 +6,31 @@ import (
 	"github.com/slawek87/JobHunters/contribution"
 	"github.com/slawek87/JobHunters/candidate"
 	"github.com/slawek87/JobHunters/feedback"
+	"fmt"
+	"github.com/slawek87/JobHunters/linkedin"
+	"github.com/slawek87/JobHunters/user"
 )
 
 func main() {
 	offer.MigrateDB()
 
+	auth := linkedin.Authorization {
+		AuthorizationEndpoint: linkedin.AUTHORIZATION_ENDPOINT,
+		AccessTokenEndpoint: linkedin.ACCESS_TOKEN_ENDPOINT,
+		Method: linkedin.GET,
+		GrantType: linkedin.GRANT_TYPE,
+		ResponseType: linkedin.RESPONSE_TYPE,
+		Scope: linkedin.SCOPE,
+		RedirectURI: linkedin.REDIRECT_URI,
+		ClientID: linkedin.CLIENT_ID,
+		ClientSecret: linkedin.CLIENT_SECRET,
+		State: linkedin.STATE,
+	}
+
+	// Generates Authorization Url. You have to visit it to authorized.
+	fmt.Println(auth.GetAuthorizationURL())
+
+	beego.Router("/user/login", &user.UserView{}, "get:Login")
 	beego.Router("/offer", &offer.OfferView{}, "post:Post")
 	beego.Router("/offer/list", &offer.OfferView{}, "get:List")
 	beego.Router("/offer/:offerID:string", &offer.OfferView{}, "get:Get")
