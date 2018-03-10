@@ -31,14 +31,14 @@ func (controller *UserController) Authorize() error {
 		GrantType:           linkedin.GRANT_TYPE,
 		ResponseType:        linkedin.RESPONSE_TYPE,
 		Scope:               linkedin.SCOPE,
-		Code:                controller.User.Authorization.Code,
+		Code:                controller.Authorization.Code,
 		RedirectURI:         linkedin.REDIRECT_URI,
 		ClientID:            linkedin.CLIENT_ID,
 		ClientSecret:        linkedin.CLIENT_SECRET,
 		State:               linkedin.STATE,
 	}
 
-	err := auth.ValidateState(controller.User.Authorization.State)
+	err := auth.ValidateState(controller.Authorization.State)
 
 	if err != nil {
 		return err
@@ -68,6 +68,8 @@ func (controller *UserController) Login() error {
 	if err != nil {
         err = controller.CreateUser()
 	}
+
+	controller.User.Authorization = controller.Authorization
 
 	return  err
 }
