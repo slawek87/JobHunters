@@ -9,9 +9,11 @@ import (
 	"fmt"
 	"github.com/slawek87/JobHunters/linkedin"
 	"github.com/slawek87/JobHunters/user"
+	"github.com/slawek87/JobHunters/conf"
 )
 
 func main() {
+	conf.SessionInit()
 	offer.MigrateDB()
 
 	auth := linkedin.Authorization {
