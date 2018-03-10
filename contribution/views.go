@@ -1,19 +1,21 @@
 package contribution
 
-import "github.com/astaxie/beego"
+import (
+	"github.com/astaxie/beego"
+	"github.com/slawek87/JobHunters/user"
+)
 
 type ContributionView struct {
 	beego.Controller
 	ContributionController ContributionController
-	//Session session.Store
 }
 
 func (view *ContributionView) Post() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
-	//getSession := v.StartSession()
 	view.ParseForm(&view.ContributionController.Contribution)
 	view.ContributionController.SetOfferID(view.Ctx.Input.Param(":offerID"))
-	view.ContributionController.SetUserID("Xyz123") //getSession.Get("ID").(string)
+	view.ContributionController.SetUserID(userSession.(*user.User).UserID)
 
 	err := view.ContributionController.Create()
 
@@ -27,11 +29,12 @@ func (view *ContributionView) Post() {
 }
 
 func (view *ContributionView) Delete() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
 	view.ContributionController.SetContributionID(view.Ctx.Input.Param(":contributionID"))
 	view.ContributionController.SetOfferID(view.Ctx.Input.Param(":offerID"))
-	view.ContributionController.SetUserID("Xyz123") //getSession.Get("ID").(string)
+	view.ContributionController.SetUserID(userSession.(*user.User).UserID)
 
 	err := view.ContributionController.Delete()
 

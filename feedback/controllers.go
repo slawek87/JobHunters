@@ -54,7 +54,7 @@ func (controller *MessageController) SetMessageID(messageID string) {
 	controller.Message.MessageID = bson.ObjectIdHex(messageID)
 }
 
-func (controller *MessageController) SetSenderID(senderID string) {
+func (controller *MessageController) SetSenderID(senderID bson.ObjectId) {
 	controller.Message.SenderID = senderID
 }
 
@@ -70,7 +70,7 @@ func (controller *MessageController) GetMessage() Message {
 	return controller.Message
 }
 
-func (controller *MainController) SetRead(readerID string) {
+func (controller *MainController) SetRead(readerID bson.ObjectId) {
 	update := false
 
 	for i, message := range controller.FeedbackController.Feedback.Messages {

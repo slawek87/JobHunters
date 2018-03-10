@@ -20,10 +20,7 @@ func (view *UserView) Login() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
-
-		session := view.StartSession()
-		session.Set("User", view.UserController.User)
-
+		view.SetSession("User", &view.UserController.User)
 		results["results"] = &view.UserController.User
 		view.Data["json"] = results
 		view.ServeJSON()

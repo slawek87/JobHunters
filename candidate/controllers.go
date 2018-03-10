@@ -29,7 +29,7 @@ func (controller *CandidateController) SetOfferID(offerID string) {
 	controller.Candidate.OfferID = bson.ObjectIdHex(offerID)
 }
 
-func (controller *CandidateController) SetRecruiterID(recruiterID string) {
+func (controller *CandidateController) SetRecruiterID(recruiterID bson.ObjectId) {
 	controller.Candidate.RecruiterID = recruiterID
 }
 

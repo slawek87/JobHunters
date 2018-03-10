@@ -9,7 +9,7 @@ import (
 type Candidate struct {
 	CandidateID     bson.ObjectId  `json:"candidate_id" bson:"candidate_id" valid:"Required"`
 	OfferID         bson.ObjectId  `json:"offer_id" bson:"offer_id" form:"-" valid:"Required"`
-	RecruiterID     string         `json:"recruiter_id"  bson:"recruiter_id" form:"-" valid:"Required"`
+	RecruiterID     bson.ObjectId  `json:"recruiter_id"  bson:"recruiter_id" form:"-" valid:"Required"`
 	FirstName       string         `json:"first_name" form:"first_name" bson:"first_name" valid:"Required"`
 	LastName        string         `json:"last_name" form:"last_name" bson:"last_name" valid:"Required"`
 	LinkedIn        string         `json:"linked_in,omitempty" form:"linked_in" bson:"linked_in" valid:"Required"`

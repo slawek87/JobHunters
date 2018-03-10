@@ -5,19 +5,20 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"strings"
 	"time"
+	"github.com/slawek87/JobHunters/user"
 )
 
 type OfferView struct {
 	beego.Controller
 	OfferController OfferController
-	//Session session.Store
 }
 
 func (view *OfferView) Post() {
 	results := make(map[string]interface{})
-	//getSession := v.StartSession()
+	userSession := view.GetSession("User")
+
 	view.ParseForm(&view.OfferController.Offer)
-	view.OfferController.SetUserID("Xyz123") //getSession.Get("ID").(string)
+	view.OfferController.SetUserID(userSession.(*user.User).UserID)
 
 	err := view.OfferController.Create()
 
@@ -47,10 +48,11 @@ func (view *OfferView) Get() {
 }
 
 func (view *OfferView) Delete() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
 	view.OfferController.SetOfferID(view.Ctx.Input.Param(":offerID"))
-	view.OfferController.SetUserID("Xyz123") //getSession.Get("ID").(string)
+	view.OfferController.SetUserID(userSession.(*user.User).UserID)
 
 	err := view.OfferController.Delete()
 
@@ -64,11 +66,12 @@ func (view *OfferView) Delete() {
 }
 
 func (view *OfferView) Put() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
 	view.ParseForm(&view.OfferController.Offer)
 	view.OfferController.SetOfferID(view.Ctx.Input.Param(":offerID"))
-	view.OfferController.SetUserID("Xyz123") //getSession.Get("ID").(string)
+	view.OfferController.SetUserID(userSession.(*user.User).UserID)
 
 	err := view.OfferController.Update()
 

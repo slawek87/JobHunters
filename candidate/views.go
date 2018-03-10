@@ -3,20 +3,21 @@ package candidate
 import (
 	"github.com/astaxie/beego"
 	"gopkg.in/mgo.v2/bson"
+	"github.com/slawek87/JobHunters/user"
 )
 
 type CandidateView struct {
 	beego.Controller
 	CandidateController CandidateController
-	//Session session.Store
 }
 
 func (view *CandidateView) Post() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
-	//getSession := v.StartSession()
+
 	view.ParseForm(&view.CandidateController.Candidate)
 	view.CandidateController.SetOfferID(view.Ctx.Input.Param(":offerID"))
-	view.CandidateController.SetRecruiterID("Xyz123") //getSession.Get("ID").(string)
+	view.CandidateController.SetRecruiterID(userSession.(*user.User).UserID)
 	view.CandidateController.Candidate.Resume, _, _= view.GetFile("resume")
 
 	err := view.CandidateController.Create()
@@ -34,12 +35,13 @@ func (view *CandidateView) Post() {
 }
 
 func (view *CandidateView) Put() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
 	view.ParseForm(&view.CandidateController.Candidate)
 	view.CandidateController.SetCandidateID(view.Ctx.Input.Param(":candidateID"))
 	view.CandidateController.SetOfferID(view.Ctx.Input.Param(":offerID"))
-	view.CandidateController.SetRecruiterID("Xyz123") //getSession.Get("ID").(string)
+	view.CandidateController.SetRecruiterID(userSession.(*user.User).UserID)
 	view.CandidateController.Candidate.Resume, _, _= view.GetFile("resume")
 
 	err := view.CandidateController.Update()
@@ -90,11 +92,12 @@ func (view *CandidateView) List() {
 }
 
 func (view *CandidateView) Delete() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
 	view.CandidateController.SetCandidateID(view.Ctx.Input.Param(":candidateID"))
 	view.CandidateController.SetOfferID(view.Ctx.Input.Param(":offerID"))
-	view.CandidateController.SetRecruiterID("Xyz123") //getSession.Get("ID").(string)
+	view.CandidateController.SetRecruiterID(userSession.(*user.User).UserID)
 
 	err := view.CandidateController.Delete()
 

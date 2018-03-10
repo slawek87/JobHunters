@@ -40,7 +40,7 @@ func (controller *OfferController) SetOfferID(offerID string) {
 	controller.Offer.OfferID = bson.ObjectIdHex(offerID)
 }
 
-func (controller *OfferController) SetUserID(userID string) {
+func (controller *OfferController) SetUserID(userID bson.ObjectId) {
 	controller.Offer.UserID = userID
 }
 

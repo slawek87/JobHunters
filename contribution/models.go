@@ -1,14 +1,14 @@
 package contribution
 
 import (
-"time"
-"gopkg.in/mgo.v2/bson"
+	"time"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type Contribution struct {
 	ContributionID bson.ObjectId `json:"contribution_id" bson:"contribution_id" valid:"Required"`
 	OfferID        bson.ObjectId `json:"offer_id" bson:"offer_id" form:"-" valid:"Required"`
-	UserID         string        `json:"user_id"  bson:"user_id" form:"-" valid:"Required"`
+	UserID         bson.ObjectId `json:"user_id"  bson:"user_id" form:"-" valid:"Required"`
 	FirstName      string        `json:"first_name" form:"first_name" bson:"first_name" valid:"Required"`
 	LastName       string        `json:"last_name" form:"last_name" bson:"last_name" valid:"Required"`
 	Avatar         string        `json:"avatar,omitempty" form:"avatar" bson:"avatar"`

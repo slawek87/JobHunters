@@ -1,14 +1,17 @@
 package feedback
 
-import "github.com/astaxie/beego"
+import (
+	"github.com/astaxie/beego"
+	"github.com/slawek87/JobHunters/user"
+)
 
 type FeedbackView struct {
 	beego.Controller
 	MainController MainController
-	//Session session.Store
 }
 
 func (view *FeedbackView) SendFeedback() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
 	view.ParseForm(&view.MainController.FeedbackController.Feedback)
@@ -24,8 +27,10 @@ func (view *FeedbackView) SendFeedback() {
 	}
 
 	view.ParseForm(&view.MainController.MessageController.Message)
-	view.MainController.MessageController.SetSenderID("xyz")
-	view.MainController.MessageController.SetSenderFullName("Sławek Ka.")
+	view.MainController.MessageController.SetSenderID(userSession.(*user.User).UserID)
+
+	fullName := userSession.(*user.User).FirstName + " " + userSession.(*user.User).LastName
+	view.MainController.MessageController.SetSenderFullName(fullName)
 
 	err := view.MainController.CreateMessage()
 
@@ -39,6 +44,7 @@ func (view *FeedbackView) SendFeedback() {
 }
 
 func (view *FeedbackView) ReceiveFeedback() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
 	view.ParseForm(&view.MainController.FeedbackController.Feedback)
@@ -51,7 +57,7 @@ func (view *FeedbackView) ReceiveFeedback() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
-		view.MainController.SetRead("xyz2")
+		view.MainController.SetRead(userSession.(*user.User).UserID)
 		results["results"] = view.MainController.FeedbackController.Feedback
 		view.Data["json"] = results
 		view.ServeJSON()

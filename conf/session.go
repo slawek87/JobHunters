@@ -5,15 +5,12 @@ import (
 	_ "github.com/astaxie/beego/session/redis"
 )
 
-var GlobalSessions *session.Manager
-
 func SessionInit() {
-	ManagerConf := session.ManagerConfig{
-		CookieName:     "gosessionid",
+	ManagerConf := &session.ManagerConfig{
 		Gclifetime:     3600,
-		ProviderConfig: "127.0.0.1:6379,1"}
+		ProviderConfig: "127.0.0.1:6379"}
 
-	GlobalSessions, err := session.NewManager("redis", &ManagerConf)
+	GlobalSessions, err := session.NewManager("redis", ManagerConf)
 
 	if err != nil {
 		panic(err)

@@ -27,7 +27,7 @@ func (controller *ContributionController) SetOfferID(offerID string) {
 	controller.Contribution.OfferID = bson.ObjectIdHex(offerID)
 }
 
-func (controller *ContributionController) SetUserID(userID string) {
+func (controller *ContributionController) SetUserID(userID bson.ObjectId) {
 	controller.Contribution.UserID = userID
 }
 
