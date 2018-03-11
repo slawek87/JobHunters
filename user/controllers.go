@@ -8,6 +8,7 @@ import (
 	"github.com/astaxie/beego/validation"
 	"errors"
 	"encoding/json"
+	"github.com/astaxie/beego/session"
 )
 
 const MongoDBIndex = "User"
@@ -26,28 +27,6 @@ func _getProfileData(profileData interface{}) string {
 
 func (controller *UserController) SetUserID(userID bson.ObjectId) {
 	controller.User.UserID = userID
-}
-
-func (controller *UserController) Update() error {
-	controller.User.UpdatedAt = time.Now()
-
-	session, db := conf.MongoDB()
-	defer session.Close()
-
-	valid := validation.Validation{}
-	isValid, _ := valid.Valid(controller.User)
-
-	if !isValid {
-		errorMsg := make(map[string]string)
-		for _, err := range valid.Errors {
-			errorMsg[err.Field] = err.Message
-		}
-		results, _ := json.Marshal(errorMsg)
-		return errors.New(string(results))
-	}
-
-	collection := db.C(MongoDBIndex)
-	return collection.Update(bson.M{"user_id": &controller.User.UserID}, &controller.User)
 }
 
 func (controller *UserController) Auth() error {
@@ -129,4 +108,47 @@ func (controller *UserController) CreateUser() error {
 
 	collection := db.C(MongoDBIndex)
 	return collection.Insert(controller.User)
+}
+
+func (controller *UserController) Update() error {
+	controller.User.UpdatedAt = time.Now()
+
+	if controller.User.Company.Name != "" {
+		if controller.User.Company.CompanyID == "" {
+			controller.User.UserID = bson.NewObjectId()
+			controller.User.CreatedAt = time.Now()
+		}
+
+		controller.User.UpdatedAt = time.Now()
+
+		valid := validation.Validation{}
+		isValid, _ := valid.Valid(controller.User.Company)
+
+		if !isValid {
+			errorMsg := make(map[string]string)
+			for _, err := range valid.Errors {
+				errorMsg[err.Field] = err.Message
+			}
+			results, _ := json.Marshal(errorMsg)
+			return errors.New(string(results))
+		}
+	}
+
+	session, db := conf.MongoDB()
+	defer session.Close()
+
+	valid := validation.Validation{}
+	isValid, _ := valid.Valid(controller.User)
+
+	if !isValid {
+		errorMsg := make(map[string]string)
+		for _, err := range valid.Errors {
+			errorMsg[err.Field] = err.Message
+		}
+		results, _ := json.Marshal(errorMsg)
+		return errors.New(string(results))
+	}
+
+	collection := db.C(MongoDBIndex)
+	return collection.Update(bson.M{"user_id": &controller.User.UserID}, &controller.User)
 }
