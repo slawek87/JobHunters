@@ -13,8 +13,8 @@ import (
 const MongoDBIndex = "User"
 
 type UserController struct {
-	User          User
-	Authorization Authorization
+	User         User
+	Authenticate Authenticate
 }
 
 func _getProfileData(profileData interface{}) string {
@@ -24,27 +24,27 @@ func _getProfileData(profileData interface{}) string {
 	return ""
 }
 
-func (controller *UserController) Authorize() error {
+func (controller *UserController) Auth() error {
 	auth := linkedin.Authorization{
 		AccessTokenEndpoint: linkedin.ACCESS_TOKEN_ENDPOINT,
 		Method:              linkedin.GET,
 		GrantType:           linkedin.GRANT_TYPE,
 		ResponseType:        linkedin.RESPONSE_TYPE,
 		Scope:               linkedin.SCOPE,
-		Code:                controller.Authorization.Code,
+		Code:                controller.Authenticate.Code,
 		RedirectURI:         linkedin.REDIRECT_URI,
 		ClientID:            linkedin.CLIENT_ID,
 		ClientSecret:        linkedin.CLIENT_SECRET,
 		State:               linkedin.STATE,
 	}
 
-	err := auth.ValidateState(controller.Authorization.State)
+	err := auth.ValidateState(controller.Authenticate.State)
 
 	if err != nil {
 		return err
 	}
 
-	controller.Authorization.AccessToken, controller.Authorization.ExpiresIn = auth.GetToken()
+	controller.Authenticate.AccessToken, controller.Authenticate.ExpiresIn = auth.GetToken()
 
 	err = controller.Login()
 
@@ -52,7 +52,7 @@ func (controller *UserController) Authorize() error {
 }
 
 func (controller *UserController) Login() error {
-	profileData := linkedin.RetrieveProfileData(controller.Authorization.AccessToken, "")
+	profileData := linkedin.RetrieveProfileData(controller.Authenticate.AccessToken, "")
 
 	controller.User.FirstName = _getProfileData(profileData["firstName"])
 	controller.User.LastName = _getProfileData(profileData["lastName"])
@@ -69,7 +69,7 @@ func (controller *UserController) Login() error {
         err = controller.CreateUser()
 	}
 
-	controller.User.Authorization = controller.Authorization
+	controller.User.Authenticate = controller.Authenticate
 
 	return  err
 }

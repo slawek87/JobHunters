@@ -22,7 +22,7 @@ func (linkedInClient *LinkedInClient) Retrieve() map[string]interface{} {
 	headers := map[string]string{
 		"Accept": "application/json",
 		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + linkedInClient.Token}
+		"Auth": "Bearer " + linkedInClient.Token}
 
 	resty.SetTimeout(time.Duration(1 * time.Minute))
 	resty.SetHeaders(headers)

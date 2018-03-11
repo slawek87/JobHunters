@@ -29,7 +29,7 @@ func main() {
 		State: linkedin.STATE,
 	}
 
-	// Generates Authorization Url. You have to visit it to authorized.
+	// Generates Auth Url. You have to visit it to authorized.
 	fmt.Println(auth.GetAuthorizationURL())
 
 	// Only Authorized User can modify those sites.
