@@ -35,7 +35,6 @@ func (view *OfferView) Get() {
 	results := make(map[string]interface{})
 
 	view.OfferController.SetOfferID(view.Ctx.Input.Param(":offerID"))
-
 	offer, err := view.OfferController.Get()
 
 	if err != nil {
