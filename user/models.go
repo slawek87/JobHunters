@@ -26,3 +26,11 @@ type Authorization struct {
 	AccessToken string `json:"access_token" form:"-"`
 	ExpiresIn   int    `json:"expires_in" form:"-"`
 }
+
+
+func (model *User) IsActive() bool {
+	if model.FirstName != "" && model.LastName != "" && model.Email != "" {
+		return true
+	}
+	return false
+}
