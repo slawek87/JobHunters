@@ -33,6 +33,7 @@ func main() {
 	fmt.Println(auth.GetAuthorizationURL())
 
 	// Only Authorized User can modify those sites.
+	beego.InsertFilter("/api/v1/user", beego.BeforeRouter, user.OnlyAuthorizedUserCanModify)
 	beego.InsertFilter("/api/v1/offer/:offerID:string", beego.BeforeRouter, user.OnlyAuthorizedUserCanModify)
 	beego.InsertFilter("/api/v1/offer/:offerID:string/contribution", beego.BeforeRouter, user.OnlyAuthorizedUserCanModify)
 
@@ -46,6 +47,7 @@ func main() {
 
 	// Routers
 	beego.Router("/api/v1/user/login", &user.UserView{}, "get:Login")
+	beego.Router("/api/v1/user", &user.OfferView{}, "put:Put")
 	beego.Router("/api/v1/offer", &offer.OfferView{}, "post:Post")
 	beego.Router("/api/v1/offer/list", &offer.OfferView{}, "get:List")
 	beego.Router("/api/v1/offer/:offerID:string", &offer.OfferView{}, "get:Get")
