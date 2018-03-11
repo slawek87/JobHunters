@@ -24,6 +24,32 @@ func _getProfileData(profileData interface{}) string {
 	return ""
 }
 
+func (controller *UserController) SetUserID(userID bson.ObjectId) {
+	controller.User.UserID = userID
+}
+
+func (controller *UserController) Update() error {
+	controller.User.UpdatedAt = time.Now()
+
+	session, db := conf.MongoDB()
+	defer session.Close()
+
+	valid := validation.Validation{}
+	isValid, _ := valid.Valid(controller.User)
+
+	if !isValid {
+		errorMsg := make(map[string]string)
+		for _, err := range valid.Errors {
+			errorMsg[err.Field] = err.Message
+		}
+		results, _ := json.Marshal(errorMsg)
+		return errors.New(string(results))
+	}
+
+	collection := db.C(MongoDBIndex)
+	return collection.Update(bson.M{"user_id": &controller.User.UserID}, &controller.User)
+}
+
 func (controller *UserController) Auth() error {
 	auth := linkedin.Authorization{
 		AccessTokenEndpoint: linkedin.ACCESS_TOKEN_ENDPOINT,

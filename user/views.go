@@ -26,3 +26,39 @@ func (view *UserView) Login() {
 		view.ServeJSON()
 	}
 }
+
+func (view *UserView) UpdateUser() {
+	userSession := view.GetSession("User")
+	results := make(map[string]interface{})
+
+	view.ParseForm(&view.UserController.User)
+	view.UserController.SetUserID(userSession.(*User).UserID)
+
+	err := view.UserController.Update()
+
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		results["results"] = view.UserController.User
+		view.Data["json"] = results
+		view.ServeJSON()
+	}
+}
+
+func (view *UserView) UpdateUserCompany() {
+	userSession := view.GetSession("User")
+	results := make(map[string]interface{})
+
+	view.UserController.User = userSession.(User)
+	view.ParseForm(&view.UserController.User.Company)
+
+	err := view.UserController.Update()
+
+	if err != nil {
+		view.CustomAbort(300, err.Error())
+	} else {
+		results["results"] = view.UserController.User
+		view.Data["json"] = results
+		view.ServeJSON()
+	}
+}
