@@ -8,7 +8,6 @@ import (
 	"github.com/astaxie/beego/validation"
 	"errors"
 	"encoding/json"
-	"github.com/astaxie/beego/session"
 )
 
 const MongoDBIndex = "User"
@@ -71,12 +70,12 @@ func (controller *UserController) Login() error {
 	err := controller.GetUser()
 
 	if err != nil {
-        err = controller.CreateUser()
+		err = controller.CreateUser()
 	}
 
 	controller.User.Authenticate = controller.Authenticate
 
-	return  err
+	return err
 }
 
 func (controller *UserController) GetUser() error {
@@ -132,6 +131,8 @@ func (controller *UserController) Update() error {
 			results, _ := json.Marshal(errorMsg)
 			return errors.New(string(results))
 		}
+	} else {
+		controller.User.Company.CompanyID = bson.NewObjectId()
 	}
 
 	session, db := conf.MongoDB()

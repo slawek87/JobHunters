@@ -6,15 +6,15 @@ import (
 )
 
 type User struct {
-	UserID            bson.ObjectId `json:"user_id" bson:"user_id" valid:"Required"`
-	LinkedInID        string        `json:"-,omitempty" bson:"linked_in_id" valid:"Required"`
-	FirstName         string        `json:"first_name" bson:"first_name" valid:"Required"`
-	LastName          string        `json:"last_name" bson:"last_name" valid:"Required"`
-	Avatar            string        `json:"avatar,omitempty" bson:"avatar"`
-	Location          string        `json:"location,omitempty" bson:"location"`
-	Headline          string        `json:"headline,omitempty" bson:"headline"`
-	Email             string        `json:"email,omitempty" bson:"email"`
-	LinkedIn          string        `json:"linked_in,omitempty" bson:"linked_in"`
+	UserID            bson.ObjectId `json:"user_id" bson:"user_id" form:"-" valid:"Required"`
+	LinkedInID        string        `json:"-" bson:"linked_in_id" form:"-" valid:"Required"`
+	FirstName         string        `json:"first_name" form:"first_name" bson:"first_name" valid:"Required"`
+	LastName          string        `json:"last_name" bson:"last_name" form:"last_name" valid:"Required"`
+	Avatar            string        `json:"avatar" bson:"avatar" form:"avatar"`
+	Location          string        `json:"location" bson:"location" form:"location"`
+	Headline          string        `json:"headline" bson:"headline" form:"headline"`
+	Email             string        `json:"email" bson:"email" form:"email"`
+	LinkedIn          string        `json:"linked_in,omitempty" bson:"linked_in" form:"linked_in"`
 	Authenticate      Authenticate  `json:"authorization" bson:"-"`
 	IsBusinessPartner bool          `json:"is_business_partner" form:"-" bson:"is_business_partner" default:"false" valid:"Required"`
 	Company           Company		`json:"company" bson:"company" form:"-"`
@@ -30,15 +30,15 @@ type Authenticate struct {
 }
 
 type Company struct {
-	CompanyID         bson.ObjectId `json:"company_id" bson:"company_id" valid:"Required"`
-	Name              string        `json:"name" bson:"name" valid:"Required"`
-	Logo              string        `json:"logo" bson:"logo"`
+	CompanyID         bson.ObjectId `json:"company_id" bson:"company_id" form:"-" valid:"Required"`
+	Name              string        `json:"name" bson:"name" form:"name" valid:"Required"`
+	Logo              string        `json:"logo" bson:"logo" form:"logo"`
 	IsBusinessPartner bool          `json:"is_business_partner" form:"-" bson:"is_business_partner" default:"false" valid:"Required"`
-	Webpage           string        `json:"webpage" bson:"webpage"`
-	City              string        `json:"city" bson:"city" valid:"Required"`
-	Country           string        `json:"country" bson:"country" valid:"Required"`
-	Email             string        `json:"email,omitempty" bson:"email" valid:"Required"`
-	Description       string        `json:"description" bson:"description"`
+	Webpage           string        `json:"webpage" bson:"webpage" form:"webpage"`
+	City              string        `json:"city" bson:"city" form:"city" valid:"Required"`
+	Country           string        `json:"country" bson:"country" form:"country" valid:"Required"`
+	Email             string        `json:"email,omitempty" bson:"email" form:"email" valid:"Required"`
+	Description       string        `json:"description" bson:"description" form:"description"`
 	CreatedAt         time.Time     `json:"created_at, @timestamp" bson:"created_at"`
 	UpdatedAt         time.Time     `json:"updated_at, @timestamp" bson:"updated_at"`
 }

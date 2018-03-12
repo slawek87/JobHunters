@@ -10,20 +10,28 @@ type UserView struct {
 }
 
 func (view *UserView) Login() {
+	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
-	view.Ctx.Input.Bind(&view.UserController.Authenticate.Code, "code")
-	view.Ctx.Input.Bind(&view.UserController.Authenticate.State, "state")
-
-	err := view.UserController.Auth()
-
-	if err != nil {
-		view.CustomAbort(300, err.Error())
-	} else {
-		view.SetSession("User", &view.UserController.User)
+	if userSession != nil {
+		view.UserController.User = *userSession.(*User)
 		results["results"] = &view.UserController.User
 		view.Data["json"] = results
 		view.ServeJSON()
+	} else {
+		view.Ctx.Input.Bind(&view.UserController.Authenticate.Code, "code")
+		view.Ctx.Input.Bind(&view.UserController.Authenticate.State, "state")
+
+		err := view.UserController.Auth()
+
+		if err != nil {
+			view.CustomAbort(300, err.Error())
+		} else {
+			view.SetSession("User", &view.UserController.User)
+			results["results"] = &view.UserController.User
+			view.Data["json"] = results
+			view.ServeJSON()
+		}
 	}
 }
 
@@ -31,8 +39,9 @@ func (view *UserView) UpdateUser() {
 	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
-	view.ParseForm(&view.UserController.User)
+	view.UserController.User = *userSession.(*User)
 	view.UserController.SetUserID(userSession.(*User).UserID)
+	view.ParseForm(&view.UserController.User)
 
 	err := view.UserController.Update()
 
@@ -49,7 +58,8 @@ func (view *UserView) UpdateUserCompany() {
 	userSession := view.GetSession("User")
 	results := make(map[string]interface{})
 
-	view.UserController.User = userSession.(User)
+	view.UserController.User = *userSession.(*User)
+	view.UserController.SetUserID(userSession.(*User).UserID)
 	view.ParseForm(&view.UserController.User.Company)
 
 	err := view.UserController.Update()
