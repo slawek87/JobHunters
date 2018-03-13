@@ -30,7 +30,7 @@ type Authenticate struct {
 }
 
 type Company struct {
-	CompanyID         bson.ObjectId `json:"company_id" bson:"company_id" form:"-" valid:"Required"`
+	CompanyID         bson.ObjectId `json:"company_id" bson:"company_id" form:"-"`
 	Name              string        `json:"name" bson:"name" form:"name" valid:"Required"`
 	Logo              string        `json:"logo" bson:"logo" form:"logo"`
 	IsBusinessPartner bool          `json:"is_business_partner" form:"-" bson:"is_business_partner" default:"false" valid:"Required"`

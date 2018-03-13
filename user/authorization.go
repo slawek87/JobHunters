@@ -19,10 +19,6 @@ var OnlyAuthorizedAndActiveUserCanModify = func(ctx *context.Context) {
 				ctx.Redirect(302, "/user/update")
 				break
 			}
-			if  user.Company.CompanyID != "" && !user.Company.IsActive() {
-				ctx.Redirect(302, "/user/company/update")
-				break
-			}
 		}
 	}
 }

@@ -114,12 +114,7 @@ func (controller *UserController) Update() error {
 	controller.User.UpdatedAt = time.Now()
 
 	if controller.User.Company.Name != "" {
-		if controller.User.Company.CompanyID == "" {
-			controller.User.UserID = bson.NewObjectId()
-			controller.User.CreatedAt = time.Now()
-		}
-
-		controller.User.UpdatedAt = time.Now()
+		controller.User.Company.UpdatedAt = time.Now()
 
 		valid := validation.Validation{}
 		isValid, _ := valid.Valid(controller.User.Company)
@@ -132,8 +127,6 @@ func (controller *UserController) Update() error {
 			results, _ := json.Marshal(errorMsg)
 			return errors.New(string(results))
 		}
-	} else {
-		controller.User.Company.CompanyID = bson.NewObjectId()
 	}
 
 	session, db := conf.MongoDB()
