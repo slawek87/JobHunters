@@ -58,6 +58,7 @@ func (controller *UserController) Auth() error {
 func (controller *UserController) Login() error {
 	profileData := linkedin.RetrieveProfileData(controller.Authenticate.AccessToken, "")
 
+	controller.User.LinkedInID = _getProfileData(profileData["id"])
 	controller.User.FirstName = _getProfileData(profileData["firstName"])
 	controller.User.LastName = _getProfileData(profileData["lastName"])
 	controller.User.Headline = _getProfileData(profileData["headline"])
@@ -82,7 +83,7 @@ func (controller *UserController) GetUser() error {
 	session, db := conf.MongoDB()
 	defer session.Close()
 
-	return db.C(MongoDBIndex).Find(bson.M{"linked_in": controller.User.LinkedIn}).One(&controller.User)
+	return db.C(MongoDBIndex).Find(bson.M{"linked_in_id": controller.User.LinkedInID}).One(&controller.User)
 }
 
 func (controller *UserController) CreateUser() error {
