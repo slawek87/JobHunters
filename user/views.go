@@ -48,6 +48,7 @@ func (view *UserView) UpdateUser() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
+		view.SetSession("User", &view.UserController.User)
 		results["results"] = view.UserController.User
 		view.Data["json"] = results
 		view.ServeJSON()
@@ -67,6 +68,7 @@ func (view *UserView) UpdateUserCompany() {
 	if err != nil {
 		view.CustomAbort(300, err.Error())
 	} else {
+		view.SetSession("User", &view.UserController.User)
 		results["results"] = view.UserController.User
 		view.Data["json"] = results
 		view.ServeJSON()
