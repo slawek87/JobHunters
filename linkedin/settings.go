@@ -2,7 +2,7 @@ package linkedin
 
 // custom settings - modify them with your requirements.
 //const REDIRECT_PATH = "/login/"
-const REDIRECT_URI = "http://0.0.0.0:8000/api/v1/user/login"
+const REDIRECT_URI = "http://0.0.0.0:8080/authorize/callback"
 const CLIENT_ID = "770vfbx6zalos0"
 const CLIENT_SECRET = "YJK5RcXiYISsLYzz"
 const STATE = "12nsd123"

@@ -2,35 +2,27 @@ package main
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/plugins/cors"
 	"github.com/slawek87/JobHunters/offer"
 	"github.com/slawek87/JobHunters/contribution"
 	"github.com/slawek87/JobHunters/candidate"
 	"github.com/slawek87/JobHunters/feedback"
-	"fmt"
-	"github.com/slawek87/JobHunters/linkedin"
 	"github.com/slawek87/JobHunters/user"
 	"github.com/slawek87/JobHunters/conf"
+	"github.com/slawek87/JobHunters/linkedin"
 )
 
 func main() {
 	conf.SessionInit()
 	offer.MigrateDB()
 
-	auth := linkedin.Authorization {
-		AuthorizationEndpoint: linkedin.AUTHORIZATION_ENDPOINT,
-		AccessTokenEndpoint: linkedin.ACCESS_TOKEN_ENDPOINT,
-		Method: linkedin.GET,
-		GrantType: linkedin.GRANT_TYPE,
-		ResponseType: linkedin.RESPONSE_TYPE,
-		Scope: linkedin.SCOPE,
-		RedirectURI: linkedin.REDIRECT_URI,
-		ClientID: linkedin.CLIENT_ID,
-		ClientSecret: linkedin.CLIENT_SECRET,
-		State: linkedin.STATE,
-	}
-
-	// Generates Auth Url. You have to visit it to authorized.
-	fmt.Println(auth.GetAuthorizationURL())
+	beego.InsertFilter("*", beego.BeforeRouter,cors.Allow(&cors.Options{
+		AllowOrigins: []string{"http://*"},
+		AllowMethods: []string{"PUT", "PATCH", "GET", "POST"},
+		AllowHeaders: []string{"Origin"},
+		ExposeHeaders: []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	// Only Authorized User can modify those sites.
 	beego.InsertFilter("/api/v1/user", beego.BeforeRouter, user.OnlyAuthorizedUserCanModify)
@@ -47,6 +39,7 @@ func main() {
 	beego.InsertFilter("/api/v1/offer/:offerID:string/candidate/:candidateID:string", beego.BeforeRouter, user.OnlyAuthorizedUser)
 
 	// Routers
+	beego.Router("/api/v1/user/authorization/url", &linkedin.LinkedinView{}, "get:GetAuthorizationURL")
 	beego.Router("/api/v1/user/login", &user.UserView{}, "get:Login")
 	beego.Router("/api/v1/user", &user.UserView{}, "put:UpdateUser")
 	beego.Router("/api/v1/user/company", &user.UserView{}, "put:UpdateUserCompany")
@@ -66,5 +59,5 @@ func main() {
 	beego.Router("/api/v1/offer/:offerID:string/candidate/:candidateID:string", &candidate.CandidateView{}, "get:Get")
 	beego.Router("/api/v1/offer/:offerID:string/candidate/:candidateID:string", &candidate.CandidateView{}, "put:Put")
 	beego.Router("/api/v1/offer/:offerID:string/candidate/:candidateID:string", &candidate.CandidateView{}, "delete:Delete")
-	beego.Run("localhost:8000")
+	beego.Run("localhost:9000")
 }
