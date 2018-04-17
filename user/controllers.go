@@ -50,6 +50,10 @@ func (controller *UserController) Auth() error {
 
 	controller.Authenticate.AccessToken, controller.Authenticate.ExpiresIn = auth.GetToken()
 
+	if controller.Authenticate.AccessToken == "" {
+		return errors.New("You are not logged.")
+	}
+
 	err = controller.Login()
 
 	return err

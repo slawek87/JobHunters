@@ -25,7 +25,7 @@ func (view *UserView) Login() {
 		err := view.UserController.Auth()
 
 		if err != nil {
-			view.CustomAbort(300, err.Error())
+			view.CustomAbort(401, err.Error())
 		} else {
 			view.SetSession("User", &view.UserController.User)
 			results["results"] = &view.UserController.User
@@ -46,7 +46,7 @@ func (view *UserView) UpdateUser() {
 	err := view.UserController.Update()
 
 	if err != nil {
-		view.CustomAbort(300, err.Error())
+		view.CustomAbort(400, err.Error())
 	} else {
 		view.SetSession("User", &view.UserController.User)
 		results["results"] = view.UserController.User
@@ -66,7 +66,7 @@ func (view *UserView) UpdateUserCompany() {
 	err := view.UserController.Update()
 
 	if err != nil {
-		view.CustomAbort(300, err.Error())
+		view.CustomAbort(400, err.Error())
 	} else {
 		view.SetSession("User", &view.UserController.User)
 		results["results"] = view.UserController.User
