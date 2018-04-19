@@ -47,16 +47,17 @@ func (authorization *Authorization) GetAuthorizationURL() string {
 }
 
 // Method returns Linkedin Token and its expiration time in seconds.
-func (authorization *Authorization) GetToken() (string, int) {
+func (authorization *Authorization) GetToken() (string, int, time.Time) {
 	return authorization.ExchangeAuthorizationCode()
 }
 
 // Method calls Linkedin API to exchange authorization code to Token.
-func (authorization *Authorization) ExchangeAuthorizationCode() (string, int) {
+func (authorization *Authorization) ExchangeAuthorizationCode() (string, int, time.Time) {
 	var result map[string]interface{}
 
 	accessToken := ""
 	expiresIn := 0
+	expirationDatetime := time.Now()
 
 	formData := map[string]string {
 			"grant_type": authorization.GrantType,
@@ -75,7 +76,8 @@ func (authorization *Authorization) ExchangeAuthorizationCode() (string, int) {
 		Post(authorization.AccessTokenEndpoint)) == true {
 		accessToken = result["access_token"].(string)
 		expiresIn = int(result["expires_in"].(float64))
+		expirationDatetime.Add(time.Microsecond * time.Duration(expiresIn * 1000))
 	}
 
-	return accessToken, expiresIn
+	return accessToken, expiresIn, expirationDatetime
 }

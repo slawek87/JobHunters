@@ -15,7 +15,7 @@ var OnlyAuthorizedAndActiveUserCanModify = func(ctx *context.Context) {
 				ctx.Redirect(302, "/user/login")
 				break
 			}
-			if  !user.IsActive() {
+			if !user.IsActive() {
 				ctx.Redirect(302, "/user/update")
 				break
 			}
@@ -45,7 +45,7 @@ var OnlyAuthorizedUser = func(ctx *context.Context) {
 
 	for _, method := range authorizedMethods {
 		if ctx.Request.Method == method {
-			if !ok {
+			if (!ok || user.Authenticate.IsExpired()){
 				ctx.Redirect(302, "/user/login")
 				break
 			}

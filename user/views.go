@@ -15,6 +15,13 @@ func (view *UserView) Login() {
 
 	if userSession != nil {
 		view.UserController.User = *userSession.(*User)
+        if view.UserController.User.Authenticate.IsExpired() {
+			view.DelSession("User")
+			view.UserController.User = User{}
+		}
+	}
+
+	if view.UserController.User.IsActive() {
 		results["results"] = &view.UserController.User
 		view.Data["json"] = results
 		view.ServeJSON()

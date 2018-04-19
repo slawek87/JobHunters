@@ -17,16 +17,17 @@ type User struct {
 	LinkedIn          string        `json:"linked_in,omitempty" bson:"linked_in" form:"linked_in"`
 	Authenticate      Authenticate  `json:"authorization" bson:"-"`
 	IsBusinessPartner bool          `json:"is_business_partner" form:"-" bson:"is_business_partner" default:"false" valid:"Required"`
-	Company           Company		`json:"company" bson:"company" form:"-"`
+	Company           Company       `json:"company" bson:"company" form:"-"`
 	CreatedAt         time.Time     `json:"created_at, @timestamp" bson:"created_at"`
 	UpdatedAt         time.Time     `json:"updated_at, @timestamp" bson:"updated_at"`
 }
 
 type Authenticate struct {
-	Code        string `json:"code" form:"code"`
-	State       string `json:"state" form:"state"`
-	AccessToken string `json:"access_token" form:"-"`
-	ExpiresIn   int    `json:"expires_in" form:"-"`
+	Code               string    `json:"code" form:"code"`
+	State              string    `json:"state" form:"state"`
+	AccessToken        string    `json:"access_token" form:"-"`
+	ExpiresIn          int       `json:"expires_in" form:"-"`
+	ExpirationDateTime time.Time `json:"expiration_datetime" form:"-"`
 }
 
 type Company struct {
@@ -55,4 +56,8 @@ func (model *Company) IsActive() bool {
 		return true
 	}
 	return false
+}
+
+func (model *Authenticate) IsExpired() bool {
+	return model.ExpirationDateTime.After(time.Now())
 }
