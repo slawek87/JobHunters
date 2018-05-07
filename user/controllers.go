@@ -95,6 +95,7 @@ func (controller *UserController) CreateUser() error {
 	defer session.Close()
 
 	controller.User.UserID = bson.NewObjectId()
+	controller.User.Company.CompanyID = bson.NewObjectId()
 	controller.User.CreatedAt = time.Now()
 	controller.User.UpdatedAt = time.Now()
 

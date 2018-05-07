@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	UserID            bson.ObjectId `json:"user_id" bson:"user_id" form:"-" valid:"Required"`
-	LinkedInID        string        `json:"-" bson:"linked_in_id" form:"-" valid:"Required"`
+	LinkedInID        string        `json:"-" bson:"linkedin_id" form:"-" valid:"Required"`
 	FirstName         string        `json:"first_name" form:"first_name" bson:"first_name" valid:"Required"`
 	LastName          string        `json:"last_name" bson:"last_name" form:"last_name" valid:"Required"`
 	Avatar            string        `json:"avatar" bson:"avatar" form:"avatar"`
