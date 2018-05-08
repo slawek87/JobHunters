@@ -10,7 +10,7 @@ type User struct {
 	LinkedInID        string        `json:"-" bson:"linkedin_id" form:"-" valid:"Required"`
 	FirstName         string        `json:"first_name" form:"first_name" bson:"first_name" valid:"Required"`
 	LastName          string        `json:"last_name" bson:"last_name" form:"last_name" valid:"Required"`
-	Avatar            string        `json:"avatar" bson:"avatar" form:"avatar"`
+	Avatar            []byte       `json:"avatar" bson:"avatar" form:"avatar"`
 	Location          string        `json:"location" bson:"location" form:"location"`
 	Headline          string        `json:"headline" bson:"headline" form:"headline"`
 	Email             string        `json:"email" bson:"email" form:"email"`
@@ -33,7 +33,7 @@ type Authenticate struct {
 type Company struct {
 	CompanyID         bson.ObjectId `json:"company_id" bson:"company_id" form:"-"`
 	Name              string        `json:"name" bson:"name" form:"name" valid:"Required"`
-	Logo              string        `json:"logo" bson:"logo" form:"logo"`
+	Logo              []byte        `json:"logo" bson:"logo" form:"logo"`
 	IsBusinessPartner bool          `json:"is_business_partner" form:"-" bson:"is_business_partner" default:"false" valid:"Required"`
 	Webpage           string        `json:"webpage" bson:"webpage" form:"webpage"`
 	City              string        `json:"city" bson:"city" form:"city" valid:"Required"`

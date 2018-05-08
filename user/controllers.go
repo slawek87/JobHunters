@@ -68,7 +68,6 @@ func (controller *UserController) Login() error {
 	controller.User.Headline = _getProfileData(profileData["headline"])
 	controller.User.LinkedInID = _getProfileData(profileData["id"])
 	controller.User.LinkedIn = _getProfileData(profileData["linkedIn"])
-	controller.User.Avatar = _getProfileData(profileData["avatar"])
 	controller.User.Location = _getProfileData(profileData["location"])
 	controller.User.Email = _getProfileData(profileData["email"])
 
