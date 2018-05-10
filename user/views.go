@@ -50,7 +50,18 @@ func (view *UserView) UpdateUser() {
 	view.UserController.SetUserID(userSession.(*User).UserID)
 	view.ParseForm(&view.UserController.User)
 
-	err := view.UserController.Update()
+	view.UserController.Update()
+
+	avatar, header, err := view.GetFile("avatar")
+	defer avatar.Close()
+
+	if err != nil {
+		view.CustomAbort(400, err.Error())
+	} else {
+		view.UserController.SaveAvatar(avatar, header.Filename)
+	}
+
+	err = view.UserController.Update()
 
 	if err != nil {
 		view.CustomAbort(400, err.Error())

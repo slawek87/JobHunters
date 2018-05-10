@@ -8,6 +8,7 @@ import (
 	"github.com/astaxie/beego/validation"
 	"errors"
 	"encoding/json"
+	"mime/multipart"
 )
 
 const MongoDBIndex = "User"
@@ -51,7 +52,7 @@ func (controller *UserController) Auth() error {
 	controller.Authenticate.AccessToken, controller.Authenticate.ExpiresIn, controller.Authenticate.ExpirationDateTime = auth.GetToken()
 
 	if controller.Authenticate.AccessToken == "" {
-		return errors.New("You are not logged.")
+		return errors.New("you are not logged")
 	}
 
 	err = controller.Login()
@@ -150,4 +151,13 @@ func (controller *UserController) Update() error {
 
 	collection := db.C(MongoDBIndex)
 	return collection.Update(bson.M{"user_id": &controller.User.UserID}, &controller.User)
+}
+
+func (controller *UserController) SaveAvatar(avatar multipart.File, Filename string) error {
+	session, db := conf.MongoDB()
+	defer session.Close()
+
+	collection := db.C(MongoDBIndex)
+
+
 }

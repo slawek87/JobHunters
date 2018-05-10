@@ -10,7 +10,7 @@ type User struct {
 	LinkedInID        string        `json:"-" bson:"linkedin_id" form:"-" valid:"Required"`
 	FirstName         string        `json:"first_name" form:"first_name" bson:"first_name" valid:"Required"`
 	LastName          string        `json:"last_name" bson:"last_name" form:"last_name" valid:"Required"`
-	Avatar            []byte       `json:"avatar" bson:"avatar" form:"avatar"`
+	Avatar            []byte        `json:"avatar" bson:"avatar" form:"avatar"`
 	Location          string        `json:"location" bson:"location" form:"location"`
 	Headline          string        `json:"headline" bson:"headline" form:"headline"`
 	Email             string        `json:"email" bson:"email" form:"email"`
