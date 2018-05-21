@@ -52,13 +52,13 @@ func (view *UserView) UpdateUser() {
 
 	view.UserController.Update()
 
-	avatar, header, err := view.GetFile("avatar")
-	defer avatar.Close()
+	file, header, err := view.GetFile("avatar")
+	defer file.Close()
 
 	if err != nil {
 		view.CustomAbort(400, err.Error())
 	} else {
-		view.UserController.SaveAvatar(avatar, header.Filename)
+		view.UserController.SaveAvatar(header, header.Filename)
 	}
 
 	err = view.UserController.Update()

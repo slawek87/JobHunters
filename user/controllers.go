@@ -9,6 +9,8 @@ import (
 	"errors"
 	"encoding/json"
 	"mime/multipart"
+	"github.com/slawek87/JobHunters/utils"
+	"os"
 )
 
 const MongoDBIndex = "User"
@@ -153,11 +155,12 @@ func (controller *UserController) Update() error {
 	return collection.Update(bson.M{"user_id": &controller.User.UserID}, &controller.User)
 }
 
-func (controller *UserController) SaveAvatar(avatar multipart.File, Filename string) error {
-	session, db := conf.MongoDB()
-	defer session.Close()
+func (controller *UserController) SaveAvatar(avatar *multipart.FileHeader, Filename string) error {
+	file, err := avatar.Open()
 
-	collection := db.C(MongoDBIndex)
-
+	if err != nil {
+		return err
+	}
+	utils.UploadToS3(file)
 
 }
